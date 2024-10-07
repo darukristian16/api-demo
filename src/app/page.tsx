@@ -21,8 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     const results = projects.filter(project =>
-      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase())
+      project.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredProjects(results);
     setCurrentPage(1);
@@ -47,12 +46,15 @@ export default function Home() {
         <input
           type="text"
           placeholder="Search APIs..."
-          className="rounded-lg border border-neutral-800 focus:ring-2 focus:ring-teal-500 w-full relative z-10 mt-4 bg-neutral-950 placeholder:text-neutral-700"
+          className="rounded-lg border border-neutral-800 focus:ring-2 focus:ring-teal-500 w-full relative z-10 mt-4 bg-neutral-950 placeholder:text-neutral-700 pl-3"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       <div className="max-w-5xl mx-auto px-8 mt-12">
-        <HoverEffect items={currentProjects} />
+        <HoverEffect items={currentProjects.map(project => ({
+          ...project,
+          link: `/api/${project.slug}`
+        }))} />
       </div>
       <div className="relative z-20">
         <Pagination>

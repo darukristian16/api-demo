@@ -1,57 +1,80 @@
 export const projects = [
     {
-      title: "Stripe",
-      description: "A technology company that builds economic infrastructure for the internet.",
-      link: "https://stripe.com",
+      title: "Age Estimator (GPU)",
+      description: "Estimate age from images using GPU acceleration.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Age_Estimator_GPU/0.0.1/v1",
+      slug: "age-estimator-gpu"
     },
     {
-      title: "Netflix",
-      description: "A streaming service that offers a wide variety of award-winning TV shows, movies, anime, documentaries, and more on thousands of internet-connected devices.",
-      link: "https://netflix.com",
+      title: "Age Estimator (CPU)",
+      description: "Estimate age from images using CPU processing.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Age_Estimator_CPU/0.0.1/v1",
+      slug: "age-estimator-cpu"
     },
     {
-      title: "Google",
-      description: "A multinational technology company that specializes in Internet-related services and products.",
-      link: "https://google.com",
+      title: "OCR Document Based",
+      description: "Optical Character Recognition for document-based images.",
+      link: "https://telkom-ai-dag.api.apilogy.id/OCR_Document_Based/0.0.3/v1/ocr/text/bbox",
+      slug: "ocr-document-based"
     },
     {
-      title: "Meta",
-      description: "A technology company that focuses on building products that advance Facebook's mission of bringing the world closer together.",
-      link: "https://meta.com",
+      title: "Object Detection",
+      description: "Detect and locate objects in images.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Object_Detection/0.0.1/v1",
+      slug: "object-detection"
     },
     {
-      title: "Amazon",
-      description: "A multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence.",
-      link: "https://amazon.com",
+      title: "Region Based Object Detection",
+      description: "Detect objects in specific regions of video streams.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Region_Based_Object_Detection/0.0.2/video_stream",
+      slug: "region-based-object-detection"
     },
     {
-      title: "Microsoft",
-      description: "A multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services.",
-      link: "https://microsoft.com",
+      title: "Speech To Text",
+      description: "Convert audio to text transcriptions.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Speech_To_Text/0.0.1/v1",
+      slug: "speech-to-text"
     },
     {
-        title: "Apple",
-        description: "A multinational technology company that designs, develops, and sells consumer electronics, computer software, and online services.",
-        link: "https://apple.com",
+      title: "Sentiment Analysis",
+      description: "Analyze the sentiment of text inputs.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Sentiment-Analysis/0.0.3/",
+      slug: "sentiment-analysis"
     },
     {
-        title: "Tesla",
-        description: "An American multinational corporation that specializes in electric vehicles, energy storage and solar panel manufacturing.",
-        link: "https://tesla.com",
+      title: "Text Embedding Query",
+      description: "Generate text embeddings for queries.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Text_Embedding_Query/0.0.1/v1",
+      slug: "text-embedding-query"
     },
     {
-        title: "SpaceX",
-        description: "A private American aerospace manufacturer and space transportation services company headquartered in Hawthorne, California.",
-        link: "https://spacex.com",
+      title: "Text Embedding Document",
+      description: "Generate text embeddings for documents.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Text_Embedding_Document/0.0.1/v1",
+      slug: "text-embedding-document"
     },
     {
-        title: "Twitter",
-        description: "An American microblogging and social networking service on which users post and interact with messages known as 'tweets'.",
-        link: "https://twitter.com",
+      title: "Text To Speech",
+      description: "Convert text to speech audio.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Text_To_Speech/0.0.1/v1",
+      slug: "text-to-speech"
     },
     {
-        title: "LinkedIn",
-        description: "A business and employment-oriented social networking service that operates via websites and mobile apps.",
-        link: "https://linkedin.com",
+      title: "Telkom LLM",
+      description: "Large Language Model for various text-based tasks.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Telkom-LLM/0.0.1",
+      slug: "telkom-llm"
+    },
+    {
+      title: "Zero-Shot Text Classification",
+      description: "Classify text without prior training on specific categories.",
+      link: "https://telkom-ai-dag.api.apilogy.id/Zero-Shot-Text/0.0.2/",
+      slug: "zero-shot-text-classification"
+    },
+    {
+      title: "Telkom Summarizer",
+      description: "Summarize text content efficiently.",
+      link: "https://telkom-ai-dag.api.apilogy.id/LLama3Summarize/0.0.4/azureopenai/summarize",
+      slug: "telkom-summarizer"
     },
   ];  
