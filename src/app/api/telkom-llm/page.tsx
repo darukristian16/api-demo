@@ -8,6 +8,7 @@ import { IconSend, IconRobot } from '@tabler/icons-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { sendMessage } from '@/lib/api'
+import TypewriterEffect from '@/components/TypewriterEffect'
 
 
 interface Message {
@@ -52,7 +53,11 @@ export default function TelkomLLMDemo() {
             </div>
             <Card className={cn("max-w-[80%]", msg.role === 'user' ? "bg-background text-white" : "bg-background")}>
               <CardContent className="p-3">
-                <p>{msg.content}</p>
+                {msg.role === 'assistant' ? (
+                  <TypewriterEffect text ={msg.content} speed={30}/>
+                ): (
+                  <p>{msg.content}</p>
+                )}
               </CardContent>
             </Card>
           </div>
