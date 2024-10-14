@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
@@ -7,13 +6,20 @@ import { sendMessage } from '../lib/api';
 import { Send } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import MessageCard from './MessageCard';
+import { saveChatSession, getChatSessionById, generateSessionId } from '@/lib/sessionStorage';
+import { useRouter } from 'next/navigation';
+import { deleteSession } from '../lib/sessionStorage';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
-const ChatBot: React.FC = () => {
+interface ChatBotProps {
+  sessionId?: string;
+}
+
+const ChatBot: React.FC<ChatBotProps> = ({ sessionId }) => {
   const [input, setInput] = useState('');
   const [systemPrompt, setSystemPrompt] = useState('You are a helpful assistant.');
   const [conversation, setConversation] = useState<Message[]>([
@@ -23,6 +29,31 @@ const ChatBot: React.FC = () => {
   const [temperature, setTemperature] = useState(0);
   const [maxGenLen, setMaxGenLen] = useState(100);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (sessionId && sessionId !== 'new') {
+      const session = getChatSessionById(sessionId);
+      if (session) {
+        setConversation(session.messages);
+        setSystemPrompt(session.messages[0].content);
+      }
+    } else if (sessionId === 'new') {
+      const newSessionId = generateSessionId();
+      router.push(`/api/telkom-llm?sessionId=${newSessionId}`);
+    }
+  }, [sessionId, router]);  
+  
+  useEffect(() => {
+    if (sessionId && sessionId !== 'new') {
+      saveChatSession({
+        id: sessionId,
+        messages: conversation,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+  }, [conversation, sessionId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,19 +64,43 @@ const ChatBot: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
     setIsLoading(true);
+
+    if (!sessionId || sessionId === 'new') {
+      const newSessionId = generateSessionId();
+      router.push(`/api/telkom-llm?sessionId=${newSessionId}`);
+      sessionId = newSessionId;
+    }
+
     const result = await sendMessage(input, conversation, temperature, maxGenLen);
-    setConversation(result.updatedConversation);
+    const updatedConversation = result.updatedConversation;
+    setConversation(updatedConversation);
+    
+    saveChatSession({
+      id: sessionId,
+      messages: updatedConversation,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
     setInput('');
     setIsLoading(false);
   };
+
 
   const handleSystemPromptEdit = (newContent: string) => {
     setSystemPrompt(newContent);
     setConversation(prev => [{ role: 'system', content: newContent }, ...prev.slice(1)]);
   };
 
+  const handleDeleteSession = () => {
+    if (sessionId) {
+      deleteSession(sessionId);
+      router.push('/api/telkom-llm');
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-zinc-950">
+    <div className="flex h-full">
       <div className="flex-1 flex flex-col">
         <div className="p-4 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-500">
           <MessageCard
@@ -108,9 +163,10 @@ const ChatBot: React.FC = () => {
               onValueChange={(value) => setMaxGenLen(value[0])}
               max={2000}
               step={10}
-              className="w-full"
+              className='w-full'
             />
           </div>
+          <Button onClick={handleDeleteSession}>Delete Session</Button>
         </div>
       </div>
     </div>
