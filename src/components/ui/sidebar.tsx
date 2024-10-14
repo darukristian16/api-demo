@@ -9,6 +9,8 @@ interface Links {
   label: string;
   href: string;
   icon: React.JSX.Element | React.ReactNode;
+  onClick?: () => void;
+  deleteIcon?: React.ReactNode;
 }
 
 interface SidebarContextProps {
@@ -89,7 +91,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-zinc-900 border-zinc-500 border-r w-[300px] flex-shrink-0",
           className
         )}
         animate={{
@@ -176,28 +178,24 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
+        "flex items-center justify-between gap-2 group/sidebar py-2",
         className
       )}
-      onClick={(e) => {
-        if (link.onClick) {
-          e.preventDefault();
-          link.onClick();
-      }
-      }}
       {...props}
     >
-      {link.icon}
-
-      <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
-      >
-        {link.label}
-      </motion.span>
+      <div className="flex items-center gap-2">
+        {link.icon}
+        <motion.span
+          animate={{
+            display: animate ? (open ? "inline-block" : "none") : "inline-block",
+            opacity: animate ? (open ? 1 : 0) : 1,
+          }}
+          className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        >
+          {link.label}
+        </motion.span>
+      </div>
+      {link.deleteIcon}
     </Link>
   );
 };

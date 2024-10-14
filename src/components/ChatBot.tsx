@@ -8,7 +8,6 @@ import { Slider } from '@/components/ui/slider';
 import MessageCard from './MessageCard';
 import { saveChatSession, getChatSessionById, generateSessionId } from '@/lib/sessionStorage';
 import { useRouter } from 'next/navigation';
-import { deleteSession } from '../lib/sessionStorage';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -38,11 +37,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ sessionId }) => {
         setConversation(session.messages);
         setSystemPrompt(session.messages[0].content);
       }
-    } else if (sessionId === 'new') {
-      const newSessionId = generateSessionId();
-      router.push(`/api/telkom-llm?sessionId=${newSessionId}`);
+    } else {
+      // Reset the conversation and system prompt for new sessions
+      setConversation([{ role: 'system', content: 'You are a helpful assistant.' }]);
+      setSystemPrompt('You are a helpful assistant.');
     }
-  }, [sessionId, router]);  
+  }, [sessionId]); 
   
   useEffect(() => {
     if (sessionId && sessionId !== 'new') {
@@ -92,13 +92,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ sessionId }) => {
     setConversation(prev => [{ role: 'system', content: newContent }, ...prev.slice(1)]);
   };
 
-  const handleDeleteSession = () => {
-    if (sessionId) {
-      deleteSession(sessionId);
-      router.push('/api/telkom-llm');
-    }
-  };
-
   return (
     <div className="flex h-full">
       <div className="flex-1 flex flex-col">
@@ -125,7 +118,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ sessionId }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 dark:bg-zinc-700"
+              className="flex-1 dark:bg-zinc-800"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -166,7 +159,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ sessionId }) => {
               className='w-full'
             />
           </div>
-          <Button onClick={handleDeleteSession}>Delete Session</Button>
         </div>
       </div>
     </div>
