@@ -5,7 +5,7 @@ interface Message {
   content: string;
 }
 
-export async function sendMessage(input: string, conversation: Message[]): Promise <{
+export async function sendMessage(input: string, conversation: Message[], temperature: number = 0, max_gen_len: number = 100): Promise <{
     success: boolean;
     message: string;
     updatedConversation: Message[];
@@ -18,16 +18,21 @@ export async function sendMessage(input: string, conversation: Message[]): Promi
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': 'evDH5X140AYLrPf8D6QC1ZQh9o031LPg'
+        'x-api-key': 'uxfd2NWrs4e1DBksuZ93KnWKBsQQe8Pa'
       },
       body: JSON.stringify({
-        text_input: JSON.stringify(updatedConversation),
-        max_gen_len: 2000
+        message: updatedConversation,
+        temperature,
+        max_gen_len
       })
     })
 
     const data = await response.json()
     console.log('API Response:', data)
+
+    if (data.result) {
+      updatedConversation.push({ role: 'assistant', content: data.result });
+    }
 
     return { 
       success: true, 

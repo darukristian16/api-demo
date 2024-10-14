@@ -62,7 +62,7 @@ export const projects = [
     {
       title: "Telkom LLM",
       description: "Large Language Model for various text-based tasks.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Telkom-LLM/0.0.1",
+      link: "https://telkom-ai-dag.api.apilogy.id/Telkom-LLM/0.0.3/chat/completion/telkomai",
       slug: "telkom-llm"
     },
     {
