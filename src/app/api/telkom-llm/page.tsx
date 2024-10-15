@@ -3,7 +3,7 @@
 import ChatBot from '@/components/ChatBot';
 import { useSearchParams } from 'next/navigation';
 
-export default function Home() {
+export default function TelkomLLM() {
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get('sessionId') || 'new';
 
