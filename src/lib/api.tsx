@@ -12,13 +12,14 @@ export async function sendMessage(input: string, conversation: Message[], temper
 }> {
   const project = projects.find(p => p.slug === 'telkom-llm')
   const updatedConversation = [...conversation, { role: 'user', content: input }]
+  const apiKey = process.env.NEXT_PUBLIC_TELKOM_LLM_API_KEY || ''
 
   try {
     const response = await fetch(project?.link ?? '', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': 'uxfd2NWrs4e1DBksuZ93KnWKBsQQe8Pa'
+        'x-api-key': apiKey
       },
       body: JSON.stringify({
         message: updatedConversation,

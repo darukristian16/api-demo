@@ -2,79 +2,68 @@ export const projects = [
     {
       title: "Age Estimator (GPU)",
       description: "Estimate age from images using GPU acceleration.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Age_Estimator_GPU/0.0.1/v1",
+      link: process.env.NEXT_PUBLIC_AGE_ESTIMATOR_URL,
       slug: "age-estimator-gpu"
     },
     {
-      title: "Age Estimator (CPU)",
-      description: "Estimate age from images using CPU processing.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Age_Estimator_CPU/0.0.1/v1",
-      slug: "age-estimator-cpu"
+      title: "Meeting Summarizer",
+      description: "Summarize meeting from audio files.",
+      link: process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_URL,
+      link2: process.env.NEXT_PUBLIC_LLAMA_SUMMARIZE_URL,
+      slug: "meeting-summarizer"
     },
     {
       title: "OCR Document Based",
       description: "Optical Character Recognition for document-based images.",
-      link: "https://telkom-ai-dag.api.apilogy.id/OCR_Document_Based/0.0.3/v1/ocr/text/bbox",
+      link: process.env.NEXT_PUBLIC_OCR_URL,
       slug: "ocr-document-based"
     },
     {
       title: "Object Detection",
       description: "Detect and locate objects in images.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Object_Detection/0.0.1/v1",
+      link: process.env.NEXT_PUBLIC_OBJECT_DETECTION_URL,
       slug: "object-detection"
-    },
-    {
-      title: "Region Based Object Detection",
-      description: "Detect objects in specific regions of video streams.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Region_Based_Object_Detection/0.0.2/video_stream",
-      slug: "region-based-object-detection"
     },
     {
       title: "Speech To Text",
       description: "Convert audio to text transcriptions.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Speech_To_Text/0.0.1/v1",
+      link: process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_URL,
       slug: "speech-to-text"
     },
     {
       title: "Sentiment Analysis",
       description: "Analyze the sentiment of text inputs.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Sentiment-Analysis/0.0.3/",
+      link: process.env.NEXT_PUBLIC_SENTIMENT_ANALYSIS_URL,
       slug: "sentiment-analysis"
     },
     {
       title: "Text Embedding Query",
       description: "Generate text embeddings for queries.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Text_Embedding_Query/0.0.1/v1",
+      link: process.env.NEXT_PUBLIC_TEXT_EMBEDDING_URL,
       slug: "text-embedding-query"
-    },
-    {
-      title: "Text Embedding Document",
-      description: "Generate text embeddings for documents.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Text_Embedding_Document/0.0.1/v1",
-      slug: "text-embedding-document"
     },
     {
       title: "Text To Speech",
       description: "Convert text to speech audio.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Text_To_Speech/0.0.1/v1",
+      link: process.env.NEXT_PUBLIC_TTS_API_URL,
       slug: "text-to-speech"
     },
     {
       title: "Telkom LLM",
       description: "Large Language Model for various text-based tasks.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Telkom-LLM/0.0.3/chat/completion/telkomai",
+      link: process.env.NEXT_PUBLIC_TELKOM_LLM_URL,
       slug: "telkom-llm"
     },
     {
       title: "Zero-Shot Text Classification",
       description: "Classify text without prior training on specific categories.",
-      link: "https://telkom-ai-dag.api.apilogy.id/Zero-Shot-Text/0.0.2/",
+      link: process.env.NEXT_PUBLIC_ZERO_SHOT_URL,
       slug: "zero-shot-text-classification"
     },
     {
       title: "Telkom Summarizer",
       description: "Summarize text content efficiently.",
-      link: "https://telkom-ai-dag.api.apilogy.id/LLama3Summarize/0.0.4/azureopenai/summarize",
+      link: process.env.NEXT_PUBLIC_LLAMA_SUMMARIZE_URL,
       slug: "telkom-summarizer"
     },
   ];  
