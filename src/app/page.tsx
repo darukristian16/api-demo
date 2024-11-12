@@ -52,7 +52,7 @@ export default function Home() {
           Telkom AI API Showcase
         </h1>
         <p className="text-neutral-500 max-w-lg mx-auto my-2 text-sm text-center relative z-10 mb-8">
-          Explore the power of Telkom Indonesia's AI-driven APIs. Discover innovative solutions crafted by the Telkom AI DAG Team to revolutionize your digital experiences.
+          Explore the power of Telkom Indonesia&apos;s AI-driven APIs. Discover innovative solutions crafted by the Telkom AI DAG Team to revolutionize your digital experiences.
         </p>
         <input
           type="text"

@@ -2,11 +2,18 @@
 
 import { useState } from 'react'
 
+interface SummaryResult {
+  response: string;
+  inference_time?: number;
+  error?: string;
+}
+
+
 export default function SummarizerDemo() {
   const [text, setText] = useState('')
   const [summaryDetail, setSummaryDetail] = useState(0.4)
   const [additionalInstructions, setAdditionalInstructions] = useState('')
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<SummaryResult | null>(null)
   const [loading, setLoading] = useState(false)
 
   const summarizeText = async () => {
@@ -25,10 +32,10 @@ export default function SummarizerDemo() {
           additional_instruction: additionalInstructions
         })
       })
-      const data = await response.json()
+      const data: SummaryResult = await response.json()
       setResult(data)
-    } catch (error) {
-      setResult({ error: 'Error processing request' })
+    } catch {
+      setResult({ response: '', error: 'Error processing request' })
     }
     setLoading(false)
   }

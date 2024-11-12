@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useAgeEstimator } from "@/components/camera";
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Camera, Upload, RotateCcw, Download } from "lucide-react";
+import Image from 'next/image';
 
-export default function AgeEstimator() {
+function AgeEstimatorContent() {
   const { 
     image, 
     age, 
@@ -95,10 +96,13 @@ export default function AgeEstimator() {
 
           {isCaptured && (
             <div className="w-full relative">
-              <img 
-                src={image ?? undefined} 
-                alt="Captured" 
+              <Image 
+                src={image ?? ''}
+                alt="Captured"
+                width={800}
+                height={600}
                 className="w-full object-contain max-h-[80vh]"
+                priority
               />
               
               <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 z-10">
@@ -127,5 +131,13 @@ export default function AgeEstimator() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AgeEstimator() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AgeEstimatorContent />
+    </Suspense>
   );
 }

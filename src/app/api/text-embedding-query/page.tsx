@@ -2,10 +2,17 @@
 
 import { useState } from 'react'
 
+interface EmbeddingResult {
+  similarity?: string;
+  message?: string;
+  error?: string;
+  embeddings?: number[];
+}
+
 export default function TextEmbeddingDemo() {
   const [text1, setText1] = useState('')
   const [text2, setText2] = useState('')
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<EmbeddingResult | null>(null)
   const [loading, setLoading] = useState(false)
 
   const getEmbedding = async (text: string) => {

@@ -2,10 +2,16 @@
 
 import { useState } from 'react'
 
+interface ClassificationResult {
+  labels?: string[];
+  scores?: number[];
+  error?: string;
+}
+
 export default function ZeroShotDemo() {
   const [text, setText] = useState('')
   const [labels, setLabels] = useState([''])
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<ClassificationResult | null>(null)
   const [loading, setLoading] = useState(false)
 
   const addLabel = () => {
@@ -39,12 +45,13 @@ export default function ZeroShotDemo() {
           is_multilabel: true
         })
       })
-      const data = await response.json()
+      const data: ClassificationResult = await response.json()
       setResult(data)
-    } catch (error) {
+    } catch {
       setResult({ error: 'Error processing request' })
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
@@ -106,14 +113,14 @@ export default function ZeroShotDemo() {
               <div>
                 <p className="font-medium mb-2">Classifications:</p>
                 <ul className="space-y-2">
-                  {result.labels?.map((label: string, index: number) => (
-                    <li key={index} className="flex justify-between">
-                      <span>{label}</span>
-                      <span className="font-medium">
-                        {(result.scores[index] * 100).toFixed(2)}%
-                      </span>
-                    </li>
-                  ))}
+                {result.labels?.map((label: string, index: number) => (
+                  <li key={index} className="flex justify-between">
+                    <span>{label}</span>
+                    <span className="font-medium">
+                      {result.scores && (result.scores[index] * 100).toFixed(2)}%
+                    </span>
+                  </li>
+                ))}
                 </ul>
               </div>
             )}

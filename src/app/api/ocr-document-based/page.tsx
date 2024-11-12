@@ -4,12 +4,17 @@ import { useState } from 'react';
 import { FiUpload, FiFile, FiLoader } from 'react-icons/fi';
 import { processOCRDocument } from '@/lib/ocrService';
 
+interface OCRResult {
+  [key: string]: {
+    data: string;
+  }
+}
+
 export default function OCRPage() {
     const [file, setFile] = useState<File | null>(null);
-    const [result, setResult] = useState<any>(null);
+    const [result, setResult] = useState<OCRResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
   
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -21,13 +26,6 @@ export default function OCRPage() {
         setFile(selectedFile);
         setError(null);
         setResult(null);
-
-        // Create image preview URL
-        const reader = new FileReader();
-        reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-        };
-        reader.readAsDataURL(selectedFile);
       }
     };
   
@@ -44,8 +42,9 @@ export default function OCRPage() {
         try {
           const data = await processOCRDocument(file);
           setResult(data);
-        } catch (err: any) {
-          setError(err.message || 'Error processing file. Please try again.');
+        } catch (err: Error | unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Error processing file. Please try again.';
+          setError(errorMessage);
           console.error('OCR Error:', err);
         } finally {
           setLoading(false);

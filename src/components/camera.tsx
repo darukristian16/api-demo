@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 
 export const videoConstraints = {
   width: { ideal: 1920 },

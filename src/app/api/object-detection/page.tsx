@@ -1,16 +1,25 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import Image from 'next/image'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { detectObjectsAPI } from '@/lib/objectDetection'
+
+interface Detection {
+  [key: string]: {
+    bbox: number[][];
+    conf_score: number;
+  }
+}
+
+interface DetectionResults {
+  data: Detection[];
+}
 
 export default function ObjectDetection() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string>('')
-  const [results, setResults] = useState<any>(null)
+  const [results, setResults] = useState<DetectionResults | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null) // Added this line
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -51,7 +60,7 @@ export default function ObjectDetection() {
     }
   }
 
-  const drawDetections = () => {
+  const drawDetections = useCallback(() => {
     if (!results || !canvasRef.current) return
 
     const canvas = canvasRef.current
@@ -86,7 +95,7 @@ export default function ObjectDetection() {
       const scaleX = width / image.width
       const scaleY = height / image.height
       
-      results.data.forEach((detection: any) => {
+      results.data.forEach((detection: Detection) => {
         const object = Object.keys(detection)[0]
         const bbox = detection[object].bbox
         const score = detection[object].conf_score
@@ -116,13 +125,13 @@ export default function ObjectDetection() {
         )
       })
     }
-  }
+  }, [preview, results])
 
   useEffect(() => {
     if (results) {
       drawDetections()
     }
-  }, [results])
+  }, [results, drawDetections])
 
   const detectObjects = async () => {
     if (!selectedImage) return

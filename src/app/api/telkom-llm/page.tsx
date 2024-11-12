@@ -1,9 +1,10 @@
 'use client'
 
+import { Suspense } from 'react';
 import ChatBot from '@/components/ChatBot';
 import { useSearchParams } from 'next/navigation';
 
-export default function TelkomLLM() {
+function TelkomLLMContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get('sessionId') || 'new';
 
@@ -11,5 +12,13 @@ export default function TelkomLLM() {
     <div className="h-full">
       <ChatBot sessionId={sessionId} />
     </div>
+  );
+}
+
+export default function TelkomLLM() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TelkomLLMContent />
+    </Suspense>
   );
 }
