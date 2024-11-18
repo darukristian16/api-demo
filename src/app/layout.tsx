@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import type { Viewport } from 'next'
 import "./globals.css"
-import { ThemeProvider } from "next-themes"
 import { ClientLayout } from "@/components/ClientLayout"
+import { Providers } from "@/components/Providers"
 
 export const metadata: Metadata = {
   title: "Telkom AI API Showcase",
@@ -20,11 +20,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-background antialiased">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <Providers>
           <ClientLayout>{children}</ClientLayout>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )
 }
-
