@@ -138,9 +138,9 @@ export default function OCRFreeForm() {
             <div className="grid gap-4">
               {result.result.map((item, index) => (
                 <Card key={index} className="p-4">
-                  <h3 className="font-medium text-gray-700">{item.type}</h3>
-                  <p className="mt-1 text-gray-600">{item.value}</p>
-                  <p className="mt-1 text-sm text-gray-500">Context: {item.context}</p>
+                  <h3 className="font-medium text-white">{item.type}</h3>
+                  <p className="mt-1 text-white">{item.value}</p>
+                  <p className="mt-1 text-sm text-white">Context: {item.context}</p>
                 </Card>
               ))}
             </div>
