@@ -2,6 +2,15 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { detectObjectsAPI } from '@/lib/objectDetection'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
 
 interface Detection {
   [key: string]: {
@@ -147,6 +156,19 @@ export default function ObjectDetection() {
     }
   }
 
+  // Function to format the detections for the table
+  const getDetectionsList = () => {
+    if (!results) return [];
+    
+    return results.data.map((detection) => {
+      const object = Object.keys(detection)[0];
+      const score = detection[object].conf_score;
+      return {
+        object,
+        confidence: (score * 100).toFixed(1)
+      };
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -176,6 +198,28 @@ export default function ObjectDetection() {
             {isLoading ? 'Detecting...' : 'Detect Objects'}
           </button>
         </div>
+
+        {results && results.data.length > 0 && (
+          <div className="max-w-[800px] mx-auto">
+            <h2 className="text-xl font-semibold mb-4">Detected Objects</h2>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Object</TableHead>
+                  <TableHead>Confidence</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {getDetectionsList().map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium capitalize">{item.object}</TableCell>
+                    <TableCell>{item.confidence}%</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
     </div>
   )
