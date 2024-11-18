@@ -19,6 +19,12 @@ export const projects = [
       slug: "ocr-document-based"
     },
     {
+      title: "OCR Free Form",
+      description: "Extract text from unstructured documents and images.",
+      link: process.env.NEXT_PUBLIC_OCR_FREE_FORM_URL,
+      slug: "ocr-free-form"
+    },
+    {
       title: "Object Detection",
       description: "Detect and locate objects in images.",
       link: process.env.NEXT_PUBLIC_OBJECT_DETECTION_URL,
@@ -53,6 +59,12 @@ export const projects = [
       description: "Large Language Model for various text-based tasks.",
       link: process.env.NEXT_PUBLIC_TELKOM_LLM_URL,
       slug: "telkom-llm"
+    },
+    {
+      title: "Large Multimodal Model",
+      description: "Process and analyze images with AI for detailed insights and descriptions.",
+      link: process.env.NEXT_PUBLIC_LMM_URL,
+      slug: "large-multimodal-model"
     },
     {
       title: "Zero-Shot Text Classification",
