@@ -1,8 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { FiUpload, FiFile, FiLoader } from 'react-icons/fi';
+import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
 import { processOCRDocument } from '@/lib/ocrService';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+
 
 interface OCRResult {
   [key: string]: {
@@ -54,69 +64,123 @@ export default function OCRPage() {
   
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl">
-      <h1 className="text-3xl font-bold mb-8 text-center">Document OCR</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
-          <div className="space-y-4">
-            <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
-            <div className="flex text-sm text-gray-600">
-              <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500">
-                <span>Upload a file</span>
-                <input
-                  id="file-upload"
-                  name="file-upload"
-                  type="file"
-                  className="sr-only"
-                  onChange={handleFileChange}
-                  accept="image/*,.pdf"
-                />
-              </label>
-              <p className="pl-1">or drag and drop</p>
+    <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
+      <div className="container mx-auto p-4 max-w-3xl">
+        <div className="text-center mb-8">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+            Document OCR
+          </h1>
+          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+            Extract text from your documents using our advanced OCR technology. Support for multiple file formats with high accuracy text recognition.
+          </p>
+        </div>
+        <div className="flex justify-end mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <FiInfo className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+              <DialogHeader>
+                <DialogTitle>Document OCR Service</DialogTitle>
+                <DialogDescription className="text-zinc-400">
+                  <div className="space-y-4 pt-4">
+                    <div>
+                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <p>Our Document OCR service uses advanced optical character recognition to extract text from various document formats.</p>
+                    </div>
+                      
+                    <div>
+                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <ol className="list-decimal list-inside space-y-2">
+                        <li>Upload your document (PDF, PNG, or JPG)</li>
+                        <li>Ensure file size is under 10MB</li>
+                        <li>Click "Extract Text" to process</li>
+                        <li>View the extracted text below</li>
+                        <li>Copy or save the results as needed</li>
+                      </ol>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-white mb-2">Features</h4>
+                      <ul className="list-disc list-inside space-y-2">
+                        <li>Multiple format support</li>
+                        <li>High accuracy text extraction</li>
+                        <li>Fast processing</li>
+                        <li>Support for multiple languages</li>
+                      </ul>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
+            <div className="space-y-4">
+              <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+              <div className="flex text-sm text-zinc-600">
+                <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+                  <span>Upload a file</span>
+                  <input
+                    id="file-upload"
+                    name="file-upload"
+                    type="file"
+                    className="sr-only"
+                    onChange={handleFileChange}
+                    accept="image/*,.pdf"
+                  />
+                </label>
+                <p className="pl-1">or drag and drop</p>
+              </div>
+              <p className="text-xs text-zinc-500">
+                PNG, JPG, PDF up to 10MB
+              </p>
             </div>
-            <p className="text-xs text-gray-500">
-              PNG, JPG, PDF up to 10MB
-            </p>
+            {file && (
+              <div className="mt-4 flex items-center justify-center text-sm text-zinc-600">
+                <FiFile className="mr-2" />
+                {file.name}
+              </div>
+            )}
           </div>
-          {file && (
-            <div className="mt-4 flex items-center justify-center text-sm text-gray-600">
-              <FiFile className="mr-2" />
-              {file.name}
+
+          <button
+            type="submit"
+            disabled={loading || !file}
+            className={`w-full py-3 px-4 rounded-md flex items-center justify-center space-x-2 ${
+              loading || !file
+                ? 'bg-zinc-800 cursor-not-allowed'
+                : 'bg-zinc-300 hover:bg-zinc-500'
+            } text-black transition-colors`}
+          >
+            {loading && <FiLoader className="animate-spin" />}
+            <span>{loading ? 'Processing...' : 'Extract Text'}</span>
+          </button>
+        </form>
+
+        {error && (
+          <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-md">
+            {error}
+          </div>
+        )}
+
+        {result && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Extracted Text:</h2>
+            <div className="bg-zinc-900 p-6 rounded-md shadow-lg">
+              <pre className="whitespace-pre-wrap text-sm text-white">
+                  {Object.values(result)[0]?.data || 'No text extracted'} {/* This will show only the extracted text */}
+              </pre>
             </div>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || !file}
-          className={`w-full py-3 px-4 rounded-md flex items-center justify-center space-x-2 ${
-            loading || !file
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
-          } text-white transition-colors`}
-        >
-          {loading && <FiLoader className="animate-spin" />}
-          <span>{loading ? 'Processing...' : 'Extract Text'}</span>
-        </button>
-      </form>
-
-      {error && (
-        <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-md">
-          {error}
-        </div>
-      )}
-
-      {result && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Extracted Text:</h2>
-          <div className="bg-gray-900 p-6 rounded-md shadow-lg">
-            <pre className="whitespace-pre-wrap text-sm text-white">
-                {result["1"].data} {/* This will show only the extracted text */}
-            </pre>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
