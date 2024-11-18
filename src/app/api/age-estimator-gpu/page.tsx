@@ -4,8 +4,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAgeEstimator } from "@/components/camera";
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
-import { Camera, Upload, RotateCcw, Download } from "lucide-react";
+import { Camera, Upload, RotateCcw, Download, Info } from "lucide-react";
 import Image from 'next/image';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 function AgeEstimatorContent() {
   const { 
@@ -89,21 +98,73 @@ function AgeEstimatorContent() {
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-4 gap-8">
       <div className="w-full max-w-3xl">
-        <div className="flex gap-2 mb-4">
-          <Button 
-            variant={selectedTab === "camera" ? "default" : "outline"}
-            onClick={() => setSelectedTab("camera")}
-          >
-            <Camera className="mr-2 h-4 w-4" />
-            Camera
-          </Button>
-          <Button 
-            variant={selectedTab === "upload" ? "default" : "outline"}
-            onClick={() => setSelectedTab("upload")}
-          >
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Image
-          </Button>
+        <div className="text-center mb-8">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+            Age Estimator
+          </h1>
+          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+            Experience our advanced GPU-powered age estimation technology. Upload an image or use your camera to detect faces and estimate ages with high accuracy.
+          </p>
+        </div>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-2">
+            <Button 
+              variant={selectedTab === "camera" ? "default" : "outline"}
+              onClick={() => setSelectedTab("camera")}
+            >
+              <Camera className="mr-2 h-4 w-4" />
+              Camera
+            </Button>
+            <Button 
+              variant={selectedTab === "upload" ? "default" : "outline"}
+              onClick={() => setSelectedTab("upload")}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Image
+            </Button>
+          </div>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Info className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+              <DialogHeader>
+                <DialogTitle>Age Estimator GPU</DialogTitle>
+                <DialogDescription className="text-zinc-400">
+                  <div className="space-y-4 pt-4">
+                    <div>
+                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <p>The Age Estimator uses advanced GPU-accelerated AI to detect faces and estimate ages with high accuracy.</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <ol className="list-decimal list-inside space-y-2">
+                        <li>Choose between camera or image upload</li>
+                        <li>Position face(s) clearly in frame</li>
+                        <li>Capture or upload your image</li>
+                        <li>Click "Estimate Age" to process</li>
+                        <li>View results displayed over detected faces</li>
+                      </ol>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-white mb-2">Features</h4>
+                      <ul className="list-disc list-inside space-y-2">
+                        <li>Multi-face detection</li>
+                        <li>Real-time processing</li>
+                        <li>Age estimation in years</li>
+                        <li>Download results</li>
+                      </ul>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="relative bg-card min-h-[400px] rounded-lg overflow-hidden">
