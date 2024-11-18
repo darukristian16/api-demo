@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAgeEstimator } from "@/components/camera";
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,9 @@ import Image from 'next/image';
 function AgeEstimatorContent() {
   const { 
     image, 
-    age, 
+    detections,
+    isLoading,
     isCaptured, 
-    isAgeEstimated, 
     capture, 
     retryCapture, 
     predictAge, 
@@ -24,6 +24,8 @@ function AgeEstimatorContent() {
   const searchParams = useSearchParams();
   const [name, setName] = useState("");
   const [selectedTab, setSelectedTab] = useState("camera");
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const nameParam = searchParams.get('name');
@@ -35,6 +37,54 @@ function AgeEstimatorContent() {
   const handleDownload = () => {
     downloadImage(name);
   };
+
+  const renderDetectionBoxes = () => {
+    if (!imageDimensions.width || !imageDimensions.height) return null;
+  
+    const faceDetections = detections.filter(detection => detection.name === "face");
+    
+    return faceDetections.map((detection, index) => {
+      const [x1, y1, x2, y2] = detection.location.x1y1x2y2;
+      
+      const scaleX = imageDimensions.width / 1920;
+      const scaleY = imageDimensions.height / 1080;
+      
+      const boxStyle = {
+        position: 'absolute',
+        left: `${x1 * scaleX}px`,
+        top: `${y1 * scaleY}px`,
+        width: `${(x2 - x1) * scaleX}px`,
+        height: `${(y2 - y1) * scaleY}px`,
+        border: '2px solid rgba(255, 255, 255, 0.8)',
+        boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.3)',
+        borderRadius: '4px',
+        pointerEvents: 'none',
+      };
+  
+      const labelStyle = {
+        position: 'absolute',
+        bottom: '-30px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        color: 'white',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: '500',
+        whiteSpace: 'nowrap',
+        backdropFilter: 'blur(4px)',
+      };
+  
+      return (
+        <div key={index} style={boxStyle as React.CSSProperties}>
+          <div style={labelStyle as React.CSSProperties}>
+            {Math.round(detection.age)} years old
+          </div>
+        </div>
+      );
+    });
+  };  
 
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-4 gap-8">
@@ -95,28 +145,34 @@ function AgeEstimatorContent() {
           )}
 
           {isCaptured && (
-            <div className="w-full relative">
+            <div className="w-full relative" ref={imageRef}>
               <Image 
                 src={image ?? ''}
                 alt="Captured"
-                width={800}
-                height={600}
+                width={1920}
+                height={1080}
                 className="w-full object-contain max-h-[80vh]"
                 priority
+                onLoad={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  setImageDimensions({
+                    width: img.clientWidth,
+                    height: img.clientHeight
+                  });
+                }}
               />
               
+              {renderDetectionBoxes()}
+
               <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 z-10">
-                {!isAgeEstimated && (
-                  <Button onClick={predictAge}>
-                    Estimate Age
+                {detections.length === 0 && (
+                  <Button onClick={predictAge} disabled={isLoading}>
+                    {isLoading ? 'Processing...' : 'Estimate Age'}
                   </Button>
                 )}
 
-                {isAgeEstimated && (
+                {detections.length > 0 && (
                   <>
-                    <div className="text-white bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
-                      Age: <span className="text-2xl font-bold">{age}</span>
-                    </div>
                     <Button variant="outline" size="icon" onClick={retryCapture}>
                       <RotateCcw className="h-4 w-4" />
                     </Button>
@@ -135,9 +191,5 @@ function AgeEstimatorContent() {
 }
 
 export default function AgeEstimator() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AgeEstimatorContent />
-    </Suspense>
-  );
+  return <AgeEstimatorContent />;
 }
