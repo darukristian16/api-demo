@@ -40,4 +40,7 @@ export function deleteSession(id: string): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSessions));
 }
 
-
+export function getAllChatSessions(): ChatSession[] {
+  const sessions = getChatSessions();
+  return sessions.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+}
