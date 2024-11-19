@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
 import { processOCRDocument } from '@/lib/ocrService';
 import {
@@ -12,7 +12,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import * as pdfjsLib from 'pdfjs-dist';
 
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface OCRResult {
   [key: string]: {
@@ -25,8 +27,43 @@ export default function OCRPage() {
     const [result, setResult] = useState<OCRResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-  
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+      // Cleanup function to revoke object URLs
+      return () => {
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+        }
+      };
+    }, [previewUrl]);
+
+    const generatePreview = async (file: File) => {
+      if (file.type === 'application/pdf') {
+        const fileArrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: fileArrayBuffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
+        
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        
+        await page.render({
+          canvasContext: context!,
+          viewport: viewport
+        }).promise;
+        
+        const previewUrl = canvas.toDataURL('image/png');
+        setPreviewUrl(previewUrl);
+      } else {
+        const imageUrl = URL.createObjectURL(file);
+        setPreviewUrl(imageUrl);
+      }
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
         const selectedFile = e.target.files[0];
         if (selectedFile.size > 10 * 1024 * 1024) {
@@ -34,34 +71,39 @@ export default function OCRPage() {
           return;
         }
         setFile(selectedFile);
+        await generatePreview(selectedFile);
         setError(null);
         setResult(null);
       }
     };
   
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!file) {
-          setError('Please select a file');
-          return;
-        }
-    
-        setLoading(true);
-        setError(null);
-    
-        try {
-          const data = await processOCRDocument(file);
-          setResult(data);
-        } catch (err: Error | unknown) {
-          const errorMessage = err instanceof Error ? err.message : 'Error processing file. Please try again.';
-          setError(errorMessage);
-          console.error('OCR Error:', err);
-        } finally {
-          setLoading(false);
-        }
-      };
-    
+      e.preventDefault();
+      if (!file) {
+        setError('Please select a file');
+        return;
+      }
   
+      setLoading(true);
+      setError(null);
+  
+      try {
+        const data = await processOCRDocument(file);
+        if (typeof data === 'string') {
+          setResult({ text: { data } });
+        } else if (data && typeof data === 'object') {
+          setResult(data);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (err: Error | unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Error processing file. Please try again.';
+        setError(errorMessage);
+        console.error('OCR Error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
@@ -118,8 +160,6 @@ export default function OCRPage() {
           </Dialog>
         </div>
 
-
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
             <div className="space-y-4">
@@ -171,16 +211,32 @@ export default function OCRPage() {
         )}
 
         {result && (
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Extracted Text:</h2>
-            <div className="bg-zinc-900 p-6 rounded-md shadow-lg">
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold mb-4">Extracted Text:</h2>
+              
+              {/* Display preview image */}
+              {previewUrl && (
+                <div className="relative inline-block">
+                  <img 
+                    src={previewUrl} 
+                    alt="Processed document" 
+                    className="max-w-full h-auto rounded-md"
+                  />
+                </div>
+              )}
+
+              {/* Extracted text */}
+              <div className="bg-zinc-900 p-6 rounded-md shadow-lg">
               <pre className="whitespace-pre-wrap text-sm text-white">
-                  {Object.values(result)[0]?.data || 'No text extracted'} {/* This will show only the extracted text */}
+                {String(typeof result === 'string' 
+                  ? result 
+                  : result.data || Object.values(result)[0]?.data || 'No text extracted')}
               </pre>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );
 }
+
