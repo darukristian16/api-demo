@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
+import { Skeleton } from "@/components/ui/skeleton"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface Word {
   word: string;
@@ -40,160 +41,283 @@ interface JsonResult {
   text: string;
 }
 
-type TranscriptionResult = VerboseJsonResult | JsonResult | string;
+interface TranscriptionResults {
+  verbose_json: VerboseJsonResult | null;
+  json: JsonResult | null;
+  text: string | null;
+  srt: string | null;
+  vtt: string | null;
+}
 
 export default function SpeechToText() {
   const [file, setFile] = useState<File | null>(null);
-  const [result, setResult] = useState<TranscriptionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [format, setFormat] = useState('verbose_json');
+  const [results, setResults] = useState<TranscriptionResults>({
+    verbose_json: null,
+    json: null,
+    text: null,
+    srt: null,
+    vtt: null
+  });
+  const [selectedFormat, setSelectedFormat] = useState<string>('verbose_json');
+
+  const formatTime = (seconds: number) => {
+    if (typeof seconds !== 'number') return '00:00:00';
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) return;
-
     setIsLoading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('response_format', format);
-    formData.append('to_wav', 'true');
-
+  
     try {
-      const response = await fetch('https://telkom-ai-dag.api.apilogy.id/Speech_To_Text/0.0.2/inference', {
-        method: 'POST',
-        headers: {
-          'x-api-key': process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_KEY!,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setResult(data);
+      const formats = ['verbose_json', 'json', 'text', 'srt', 'vtt'];
+      const responses = await Promise.all(
+        formats.map(async (format) => {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('response_format', format);
+          formData.append('to_wav', 'yes');
+          formData.append('language', 'english'); // Add language parameter
+          formData.append('task', 'transcribe'); // Add task parameter
+  
+          const response = await fetch(process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_URL!, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'x-api-key': process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_KEY!,
+            },
+            body: formData,
+          });
+  
+          const data = await response.json();
+          return { format, data };
+        })
+      );
+  
+      const newResults = responses.reduce((acc, { format, data }) => {
+        acc[format as keyof TranscriptionResults] = data;
+        return acc;
+      }, {} as TranscriptionResults);
+  
+      setResults(newResults);
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }; 
 
-  const formatTime = (seconds: number) => {
-    if (typeof seconds !== 'number') return '00:00:00';
-    
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const renderResult = () => {
-    if (!result) return null;
-
-    switch (format) {
-      case 'verbose_json': {
-        const verboseResult = result as VerboseJsonResult;
-        return (
-          <div className="space-y-4">
-            <Card className="p-4">
-              <h2 className="font-semibold mb-2">Summary</h2>
-              <p>Language: {verboseResult.language}</p>
-              <p>Duration: {formatTime(verboseResult.duration)}</p>
-              <p>Task: {verboseResult.task}</p>
+  const renderSelectedResult = () => {
+    switch (selectedFormat) {
+      case 'verbose_json':
+        return results.verbose_json && (
+          <div className="space-y-4 mt-8">
+            <h2 className="text-xl font-semibold text-white">Verbose JSON Output</h2>
+            <Card className="p-4 bg-zinc-900 border-zinc-700">
+              <h3 className="font-semibold mb-2 text-white">Summary</h3>
+              <p className="text-zinc-300">Language: {results.verbose_json.language}</p>
+              <p className="text-zinc-300">Duration: {formatTime(results.verbose_json.duration)}</p>
+              <p className="text-zinc-300">Task: {results.verbose_json.task}</p>
+              <h3 className="font-semibold mt-4 mb-2 text-white">Full Transcription</h3>
+              <p className="whitespace-pre-wrap text-zinc-300">{results.verbose_json.text}</p>
+              {results.verbose_json.segments && (
+                <div className="mt-4">
+                  <h3 className="font-semibold mb-2 text-white">Segments</h3>
+                  <div className="space-y-2">
+                    {results.verbose_json.segments.map((segment, index) => (
+                      <div key={index} className="border-t border-zinc-700 pt-2">
+                        <p className="text-sm text-zinc-400">
+                          {formatTime(segment.start)} - {formatTime(segment.end)}
+                        </p>
+                        <p className="text-zinc-300">{segment.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </Card>
-
-            <Card className="p-4">
-              <h2 className="font-semibold mb-2">Full Transcription</h2>
-              <p className="whitespace-pre-wrap">{verboseResult.text}</p>
-            </Card>
-
-            {verboseResult.segments && verboseResult.segments.length > 0 && (
-              <div className="space-y-2">
-                <h2 className="font-semibold">Segments</h2>
-                {verboseResult.segments.map((segment) => (
-                  <Card key={segment.id} className="p-4">
-                    <p className="text-sm text-gray-500">
-                      {formatTime(segment.start)} - {formatTime(segment.end)}
-                    </p>
-                    <p className="mt-1">{segment.text}</p>
-                  </Card>
-                ))}
-              </div>
-            )}
           </div>
         );
-      }
-
-      case 'json': {
-        const jsonResult = result as JsonResult;
-        return (
-          <Card className="p-4">
-            <h2 className="font-semibold mb-2">Transcription</h2>
-            <p className="whitespace-pre-wrap">{jsonResult.text}</p>
-          </Card>
+      case 'json':
+        return results.json && (
+          <div className="space-y-4 mt-8">
+            <h2 className="text-xl font-semibold text-white">JSON Output</h2>
+            <Card className="p-4 bg-zinc-900 border-zinc-700">
+              <pre className="whitespace-pre-wrap text-zinc-300">{JSON.stringify(results.json, null, 2)}</pre>
+            </Card>
+          </div>
         );
-      }
-
       case 'text':
-      case 'srt':
-      case 'vtt': {
-        return (
-          <Card className="p-4">
-            <h2 className="font-semibold mb-2">
-              {format.toUpperCase()} Output
-            </h2>
-            <pre className="whitespace-pre-wrap font-mono text-sm bg-muted p-4 rounded-md">
-              {result as string}
-            </pre>
-          </Card>
+        return results.text && (
+          <div className="space-y-4 mt-8">
+            <h2 className="text-xl font-semibold text-white">Text Output</h2>
+            <Card className="p-4 bg-zinc-900 border-zinc-700">
+              <p className="whitespace-pre-wrap text-zinc-300">{results.text}</p>
+            </Card>
+          </div>
         );
-      }
-
-      default:
-        return null;
+      case 'srt':
+        return results.srt && (
+          <div className="space-y-4 mt-8">
+            <h2 className="text-xl font-semibold text-white">SRT Output</h2>
+            <Card className="p-4 bg-zinc-900 border-zinc-700">
+              <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-300">{results.srt}</pre>
+            </Card>
+          </div>
+        );
+      case 'vtt':
+        return results.vtt && (
+          <div className="space-y-4 mt-8">
+            <h2 className="text-xl font-semibold text-white">VTT Output</h2>
+            <Card className="p-4 bg-zinc-900 border-zinc-700">
+              <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-300">{results.vtt}</pre>
+            </Card>
+          </div>
+        );
     }
-  };
+  };  
+  
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Speech to Text</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="audio">Upload Audio File</Label>
-          <Input
-            id="audio"
-            type="file"
-            accept="audio/*"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
+    <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
+      <div className="container mx-auto p-4 max-w-3xl">
+        <div className="text-center mb-8">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+            Speech to Text
+          </h1>
+          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+            Convert your audio files into text with high accuracy transcription.
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="format">Response Format</Label>
-          <Select value={format} onValueChange={setFormat}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select format" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="verbose_json">Verbose JSON</SelectItem>
-              <SelectItem value="json">JSON</SelectItem>
-              <SelectItem value="text">Text</SelectItem>
-              <SelectItem value="srt">SRT</SelectItem>
-              <SelectItem value="vtt">VTT</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex justify-end mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <FiInfo className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+              <DialogHeader>
+                <DialogTitle>Speech to Text Service</DialogTitle>
+                <DialogDescription className="text-zinc-400">
+                  <div className="space-y-4 pt-4">
+                    <div>
+                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <p>Our Speech to Text service converts audio files into accurate text transcriptions.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <ol className="list-decimal list-inside space-y-2">
+                        <li>Upload your audio file</li>
+                        <li>Click transcribe to process</li>
+                        <li>View all format outputs</li>
+                        <li>Choose the format that suits your needs</li>
+                      </ol>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Transcribing...' : 'Transcribe Audio'}
-        </Button>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
+            <div className="space-y-4">
+              <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+              <div className="flex text-sm text-zinc-600">
+                <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+                  <span>Upload audio file</span>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className="sr-only"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    accept="audio/*"
+                  />
+                </label>
+                <p className="pl-1">or drag and drop</p>
+              </div>
+              {file && (
+                <div className="mt-4 flex items-center justify-center text-sm text-zinc-600">
+                  <FiFile className="mr-2" />
+                  {file.name}
+                </div>
+              )}
+            </div>
+          </div>
 
-        {renderResult()}
-      </form>
+          {file && (
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold text-white mb-4">Audio Preview:</h2>
+              <Card className="p-4 bg-zinc-900 border-zinc-700">
+                <div className="flex flex-col space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <FiFile className="h-8 w-8 text-zinc-400" />
+                    <div>
+                      <p className="text-white">{file.name}</p>
+                      <p className="text-sm text-zinc-400">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                  </div>
+                  <audio 
+                    controls 
+                    className="w-full"
+                    src={URL.createObjectURL(file)}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="mt-6">
+              <Card className="p-4 bg-zinc-900 border-zinc-700">
+                <div className="flex items-center space-x-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          <Button 
+            type="submit" 
+            disabled={isLoading || !file}
+            className={`w-full py-3 px-4 rounded-md flex items-center justify-center space-x-2 ${
+              isLoading || !file ? 'bg-zinc-800 cursor-not-allowed' : 'bg-zinc-300 hover:bg-zinc-500'
+            } text-black transition-colors`}
+          >
+            {isLoading && <FiLoader className="animate-spin" />}
+            <span>{isLoading ? 'Transcribing...' : 'Transcribe Audio'}</span>
+          </Button>
+        </form>
+
+        <div className="mt-6">
+          <select
+            value={selectedFormat}
+            onChange={(e) => setSelectedFormat(e.target.value)}
+            className="w-full p-2 rounded-md bg-zinc-800 text-white border border-zinc-500"
+          >
+            <option value="verbose_json">Verbose JSON</option>
+            <option value="json">JSON</option>
+            <option value="text">Text</option>
+            <option value="srt">SRT</option>
+            <option value="vtt">VTT</option>
+          </select>
+        </div>
+
+        {Object.values(results).some(result => result !== null) && renderSelectedResult()}
+      </div>
     </div>
   );
 }
