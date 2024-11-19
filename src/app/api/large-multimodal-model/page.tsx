@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ImagePlus } from 'lucide-react'; // Add this import at the top
+import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from '@/components/ui/card';
 import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
 import {
@@ -27,6 +28,25 @@ export default function LargeMultimodalModel() {
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isNewImage, setIsNewImage] = useState(true);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+      setIsNewImage(true);
+    }
+  };  
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);  
 
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -40,6 +60,7 @@ export default function LargeMultimodalModel() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
+    setIsNewImage(false);
 
     let base64Image = '';
     if (file) {
@@ -120,13 +141,57 @@ export default function LargeMultimodalModel() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
-            Multimodal Chat
+          <h1 className="md:text-6xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+            Large Multimodal Model
           </h1>
           <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
             Chat with our AI about images and text using advanced multimodal technology.
           </p>
         </div>
+        <div className="flex justify-end mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <FiInfo className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+              <DialogHeader>
+                <DialogTitle>Multimodal Chat Service</DialogTitle>
+                <DialogDescription className="text-zinc-400">
+                  <div className="space-y-4 pt-4">
+                    <div>
+                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <p>Our multimodal chat service can understand and discuss both images and text.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <ol className="list-decimal list-inside space-y-2">
+                        <li>Upload an image</li>
+                        <li>Type your question or prompt</li>
+                        <li>Click send to get AI response</li>
+                        <li>Continue the conversation naturally</li>
+                      </ol>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {previewUrl && (
+          <div className="mt-6 mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Preview:</h2>
+            <div className="relative inline-block">
+              <img 
+                src={previewUrl} 
+                alt="Upload preview" 
+                className="max-w-full h-auto rounded-lg"
+              />
+            </div>
+          </div>
+        )}
 
         <div className="space-y-4">
           {messages.map((message, index) => (
@@ -150,6 +215,31 @@ export default function LargeMultimodalModel() {
               </div>
             </div>
           ))}
+
+          {isLoading && (
+              <div className="flex justify-start">
+                <div className="p-4 rounded-lg bg-zinc-900 max-w-[80%]">
+                  <div className="flex items-center space-x-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+          )}
+
+          {file && isNewImage && (
+            <div className="flex justify-end">
+              <div className="p-4 rounded-lg bg-zinc-800 max-w-[80%]">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Preview"
+                  className="max-w-xs mb-2 rounded"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-6">

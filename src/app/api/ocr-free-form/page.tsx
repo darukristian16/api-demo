@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -206,13 +206,13 @@ export default function OCRFreeForm() {
                   placeholder="Enter label"
                   value={pair.label}
                   onChange={(e) => handleLabelChange(index, 'label', e.target.value)}
-                  className="bg-zinc-800 text-white border-zinc-500"
+                  className="bg-zinc-900/50 text-white border-zinc-500"
                 />
                 <Input
                   placeholder="Enter value"
                   value={pair.description}
                   onChange={(e) => handleLabelChange(index, 'description', e.target.value)}
-                  className="bg-zinc-800 text-white border-zinc-500"
+                  className="bg-zinc-900/50 text-white border-zinc-500"
                 />
                 <Button 
                   type="button" 
@@ -241,17 +241,32 @@ export default function OCRFreeForm() {
         {result && (
           <div className="mt-8 space-y-6">
             <h2 className="text-xl font-semibold text-white">Extracted Information</h2>
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h3 className="text-lg font-medium text-white mb-4">Information</h3>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-white mb-4">Context</h3>
+              </div>
               {result.result.map((item, index) => (
-                <Card key={index} className="p-4 bg-zinc-900 border-zinc-700">
-                  <h3 className="font-medium text-white">{item.type}</h3>
-                  <p className="mt-1 text-white">{item.value}</p>
-                  <p className="mt-1 text-sm text-zinc-400">Context: {item.context}</p>
-                </Card>
+                <React.Fragment key={index}>
+                  <Card className="p-4 bg-zinc-900 border-zinc-700">
+                    <div>
+                      <h3 className="font-medium text-white">{item.type}</h3>
+                      <p className="mt-1 text-white">{item.value}</p>
+                    </div>
+                  </Card>
+                  <Card className="p-4 bg-zinc-900 border-zinc-700">
+                    <div>
+                      <p className="text-sm text-zinc-400">{item.context}</p>
+                    </div>
+                  </Card>
+                </React.Fragment>
               ))}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
