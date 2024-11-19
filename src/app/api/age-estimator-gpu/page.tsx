@@ -5,6 +5,7 @@ import { useAgeEstimator } from "@/components/camera";
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Camera, Upload, RotateCcw, Download, Info } from "lucide-react";
+import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
 import Image from 'next/image';
 import {
   Dialog,
@@ -181,25 +182,24 @@ function AgeEstimatorContent() {
           )}
 
           {!isCaptured && selectedTab === "upload" && (
-            <div className="w-full h-[400px] flex items-center justify-center">
-              <div className="text-center p-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  id="fileInput"
-                />
-                <label htmlFor="fileInput">
-                  <Button asChild>
-                    <span>
-                      <Upload className="mr-2 h-4 w-4" />
-                      Choose Image
-                    </span>
-                  </Button>
-                </label>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Supported formats: JPG, PNG
+            <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
+              <div className="space-y-4">
+                <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+                <div className="flex text-sm text-zinc-600">
+                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+                    <span>Upload a file</span>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      className="sr-only"
+                      onChange={handleFileUpload}
+                      accept="image/*"
+                    />
+                  </label>
+                  <p className="pl-1">or drag and drop</p>
+                </div>
+                <p className="text-xs text-zinc-500">
+                  PNG, JPG up to 10MB
                 </p>
               </div>
             </div>
