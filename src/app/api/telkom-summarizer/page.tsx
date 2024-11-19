@@ -19,7 +19,7 @@ export default function SummarizerDemo() {
   const summarizeText = async () => {
     setLoading(true)
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_LLAMA_SUMMARIZE_URL + '/azureopenai/summarize', {
+      const response = await fetch(process.env.NEXT_PUBLIC_LLAMA_SUMMARIZE_URL!, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
