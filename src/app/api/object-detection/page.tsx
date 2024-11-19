@@ -10,6 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 
 interface Detection {
@@ -171,37 +182,101 @@ export default function ObjectDetection() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Object Detection</h1>
-      
-      <div className="space-y-6">
-        <div className="flex flex-col items-center">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="mb-4"
-          />
-          
-          <div className="relative mb-4 max-w-[800px] max-h-[600px]">
-            <canvas
-              ref={canvasRef}
-              className="w-full h-auto"
-            />
-          </div>
-
-          <button
-            onClick={detectObjects}
-            disabled={!selectedImage || isLoading}
-            className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
-          >
-            {isLoading ? 'Detecting...' : 'Detect Objects'}
-          </button>
+    <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
+      <div className="container mx-auto p-4 max-w-3xl">
+        <div className="text-center mb-8">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+            Object Detection
+          </h1>
+          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+            Detect and analyze objects in your images using our advanced computer vision technology.
+          </p>
         </div>
 
+        <div className="flex justify-end mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <FiInfo className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+              <DialogHeader>
+                <DialogTitle>Object Detection Service</DialogTitle>
+                <DialogDescription className="text-zinc-400">
+                  <div className="space-y-4 pt-4">
+                    <div>
+                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <p>Our object detection service identifies and locates multiple objects within images.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <ol className="list-decimal list-inside space-y-2">
+                        <li>Upload an image</li>
+                        <li>Click "Detect Objects"</li>
+                        <li>View detected objects with bounding boxes</li>
+                        <li>Check confidence scores in the table below</li>
+                      </ol>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
+          <div className="space-y-4">
+            <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+            <div className="flex text-sm text-zinc-600">
+              <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+                <span>Upload an image</span>
+                <input
+                  id="file-upload"
+                  type="file"
+                  className="sr-only"
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                />
+              </label>
+              <p className="pl-1">or drag and drop</p>
+            </div>
+          </div>
+          {selectedImage && (
+            <div className="mt-4 flex items-center justify-center text-sm text-zinc-600">
+              <FiFile className="mr-2" />
+              {selectedImage.name}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6">
+          <Button
+            onClick={detectObjects}
+            disabled={!selectedImage || isLoading}
+            className={`w-full py-3 px-4 rounded-md flex items-center justify-center space-x-2 ${
+              !selectedImage || isLoading
+                ? 'bg-zinc-800 cursor-not-allowed'
+                : 'bg-zinc-300 hover:bg-zinc-500'
+            } text-black transition-colors`}
+          >
+            {isLoading && <FiLoader className="animate-spin" />}
+            <span>{isLoading ? 'Detecting...' : 'Detect Objects'}</span>
+          </Button>
+        </div>
+
+        {selectedImage && (
+          <div className="mt-8">
+            <canvas
+              ref={canvasRef}
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
+        )}
+
         {results && results.data.length > 0 && (
-          <div className="max-w-[800px] mx-auto">
-            <h2 className="text-xl font-semibold mb-4">Detected Objects</h2>
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4 text-white">Detected Objects</h2>
             <Table>
               <TableHeader>
                 <TableRow>
