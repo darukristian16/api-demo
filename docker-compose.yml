@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: demo-api
+    ports:
+      - "3000:3000"
+    # volumes:
+    #   - .:/app
+    environment:
+      - NODE_ENV=development
+    command: ["npm", "run", "dev"]
+    labels:
+        - "traefik.enable=true"
+        # - "traefik.http.routers.about.middlewares=basicauth"
+        - "traefik.http.routers.demo-api.rule=Host(`demo-api.dhiaul.my.id`)"
+        - "traefik.http.services.demo-api.loadbalancer.server.port=3000"
