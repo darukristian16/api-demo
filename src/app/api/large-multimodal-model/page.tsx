@@ -21,7 +21,9 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -210,7 +212,13 @@ export default function LargeMultimodalModel() {
                     className="max-w-xs mb-2 rounded"
                   />
                 )}
-                <p className="text-zinc-950 dark:text-white whitespace-pre-wrap">{message.content}</p>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeSanitize]}
+                  className="text-zinc-950 dark:text-white whitespace-pre-wrap"
+                >
+                  {message.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}
