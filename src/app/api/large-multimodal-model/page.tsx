@@ -15,6 +15,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { AlertCircle } from "lucide-react"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 
 interface Message {
@@ -24,6 +30,7 @@ interface Message {
 }
 
 export default function LargeMultimodalModel() {
+  const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -37,6 +44,8 @@ export default function LargeMultimodalModel() {
       setFile(selectedFile);
       setPreviewUrl(URL.createObjectURL(selectedFile));
       setIsNewImage(true);
+      setQuestion(''); // Reset the question input
+      setMessages([]); // Reset the conversation for the new image
     }
   };  
 
@@ -63,42 +72,42 @@ export default function LargeMultimodalModel() {
     setIsNewImage(false);
 
     let base64Image = '';
-    if (file) {
+    if (file && isNewImage) {
       base64Image = await convertToBase64(file);
     }
 
     const userMessage: Message = {
       role: 'user',
       content: question,
-      image: base64Image || undefined
+      image: isNewImage ? base64Image || undefined : undefined
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setIsLoading(true);
 
     try {
       const payload = {
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                text: question,
-                type: "text"
+        messages: updatedMessages.map(msg => ({
+          role: msg.role,
+          content: [
+            {
+              text: msg.content,
+              type: "text"
+            },
+            ...(msg.image ? [{
+              image_url: {
+                url: msg.image
               },
-              ...(base64Image ? [{
-                image_url: {
-                  url: base64Image
-                },
-                type: "image_url"
-              }] : [])
-            ]
-          }
-        ],
+              type: "image_url"
+            }] : [])
+          ]
+        })),
         max_tokens: 1000,
         temperature: 0,
         stream: false
       };
+
 
       const response = await fetch(process.env.NEXT_PUBLIC_LMM_URL!, {
         method: 'POST',
@@ -127,13 +136,16 @@ export default function LargeMultimodalModel() {
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage: Message = {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      setError(errorMessage);
+      const errorResponse: Message = {
         role: 'assistant',
         content: 'There was an error processing your request. Please try again.'
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorResponse]);
     } finally {
       setIsLoading(false);
+      setTimeout(() => setError(null), 10000);
     }
   };
 
@@ -179,19 +191,6 @@ export default function LargeMultimodalModel() {
             </DialogContent>
           </Dialog>
         </div>
-
-        {previewUrl && (
-          <div className="mt-6 mb-8">
-            <h2 className="text-xl font-semibold text-zinc-950 dark:text-white mb-4">Preview:</h2>
-            <div className="relative inline-block">
-              <img 
-                src={previewUrl} 
-                alt="Upload preview" 
-                className="max-w-full h-auto rounded-lg"
-              />
-            </div>
-          </div>
-        )}
 
         <div className="space-y-4">
           {messages.map((message, index) => (
@@ -248,7 +247,7 @@ export default function LargeMultimodalModel() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                onChange={handleFileChange}
                 className="hidden"
                 id="file-upload"
               />
@@ -274,6 +273,31 @@ export default function LargeMultimodalModel() {
             </Button>
           </form>
         </div>
+        {error && (
+          <div className="fixed bottom-4 left-4 z-50">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="destructive" size="icon">
+                  <AlertCircle className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Error</DialogTitle>
+                  <DialogDescription>
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Error Details</AlertTitle>
+                      <AlertDescription>
+                        {error}
+                      </AlertDescription>
+                    </Alert>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </div>
     </div>
   );
