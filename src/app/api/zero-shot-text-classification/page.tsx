@@ -71,10 +71,10 @@ export default function ZeroShotDemo() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
             Zero-Shot Classification
           </h1>
-          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+          <p className="mt-2 text-zinc-700 dark:text-zinc-500 text-sm max-w-lg mx-auto">
             Classify text into custom categories without prior training.
           </p>
         </div>
@@ -86,17 +86,17 @@ export default function ZeroShotDemo() {
                 <FiInfo className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+            <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
               <DialogHeader>
                 <DialogTitle>Zero-Shot Classification Service</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                   <div className="space-y-4 pt-4">
                     <div>
-                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                       <p>Our Zero-Shot Classification service allows you to classify text into custom categories without pre-training.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Enter your text to classify</li>
                         <li>Add custom labels/categories</li>
@@ -113,9 +113,9 @@ export default function ZeroShotDemo() {
 
         <div className="space-y-6">
           <div>
-            <label className="block mb-2 text-white">Text to Classify:</label>
+            <label className="block mb-2">Text to Classify:</label>
             <textarea 
-              className="w-full p-4 border rounded bg-zinc-900 text-white border-zinc-500"
+              className="w-full p-4 border rounded bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500"
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={6}
@@ -126,7 +126,7 @@ export default function ZeroShotDemo() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div className="flex-1">
-                <Label className="text-white">Classification Labels</Label>
+                <Label>Classification Labels</Label>
               </div>
               <Button type="button" onClick={addLabel} variant="outline">
                 Add Label
@@ -139,7 +139,7 @@ export default function ZeroShotDemo() {
                   placeholder="Enter label"
                   value={label}
                   onChange={(e) => updateLabel(index, e.target.value)}
-                  className="bg-zinc-900/50 text-white border-zinc-500"
+                  className="bg-zinc-50 border-zinc-500 dark:bg-zinc-900/50 dark:border-zinc-500"
                 />
                 <Button 
                   type="button" 
@@ -166,18 +166,18 @@ export default function ZeroShotDemo() {
 
           {result && (
             <div className="mt-8 space-y-6">
-              <h2 className="text-xl font-semibold text-white">Classification Results</h2>
+              <h2 className="text-xl font-semibold">Classification Results</h2>
               <div className="grid gap-4">
                 {result.error ? (
-                  <Card className="p-4 bg-zinc-900 border-zinc-700">
+                  <Card className="p-4 bg-zinc-50 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
                     <p className="text-red-500">{result.error}</p>
                   </Card>
                 ) : (
                   result.labels?.map((label, index) => (
-                    <Card key={index} className="p-4 bg-zinc-900 border-zinc-700">
+                    <Card key={index} className="p-4 bg-zinc-50 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
                       <div className="flex justify-between items-center">
-                        <h3 className="font-medium text-white">{label}</h3>
-                        <p className="text-white">
+                        <h3 className="font-medium">{label}</h3>
+                        <p>
                           {result.scores && (result.scores[index] * 100).toFixed(2)}%
                         </p>
                       </div>

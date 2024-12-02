@@ -65,10 +65,10 @@ export default function TextToSpeechView() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
             Text to Speech
           </h1>
-          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+          <p className="mt-2 text-zinc-700 dark:text-zinc-500 text-sm max-w-lg mx-auto">
             Convert your text into natural-sounding speech with multiple voice options.
           </p>
         </div>
@@ -80,17 +80,17 @@ export default function TextToSpeechView() {
                 <FiInfo className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+            <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
               <DialogHeader>
                 <DialogTitle>Text to Speech Service</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                   <div className="space-y-4 pt-4">
                     <div>
-                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                       <p>Our Text to Speech service converts text into natural-sounding speech using advanced AI technology.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Select a voice model</li>
                         <li>Enter your text</li>
@@ -107,7 +107,7 @@ export default function TextToSpeechView() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 text-white">Voice Model</label>
+            <label className="block mb-2">Voice Model</label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -154,12 +154,12 @@ export default function TextToSpeechView() {
           </div>
 
           <div>
-            <label className="block mb-2 text-white">Text Input</label>
+            <label className="block mb-2">Text Input</label>
             <Textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Enter text to convert to speech..."
-              className="w-full p-4 border rounded bg-zinc-950 text-white border-zinc-500"
+              className="w-full p-4 border rounded bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500"
               rows={6}
             />
           </div>
@@ -178,7 +178,7 @@ export default function TextToSpeechView() {
 
         {isLoading && (
           <div className="mt-6">
-            <Card className="p-4 bg-zinc-900 border-zinc-700">
+            <Card className="p-4 bg-zinc-50 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
               <div className="flex items-center space-x-4">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-[250px]" />
@@ -191,8 +191,8 @@ export default function TextToSpeechView() {
 
         {audioUrl && !isLoading && (
           <div className="mt-8 space-y-6">
-            <h2 className="text-xl font-semibold text-white">Generated Audio</h2>
-            <Card className="p-4 bg-zinc-900 border-zinc-700">
+            <h2 className="text-xl font-semibold">Generated Audio</h2>
+            <Card className="p-4 bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500">
               <audio controls className="w-full">
                 <source src={audioUrl} type="audio/wav" />
                 Your browser does not support the audio element.

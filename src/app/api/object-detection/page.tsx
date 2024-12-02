@@ -185,10 +185,10 @@ export default function ObjectDetection() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
             Object Detection
           </h1>
-          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+          <p className="mt-2 text-zinc-700 dark:text-zinc-500 text-sm max-w-lg mx-auto">
             Detect and analyze objects in your images using our advanced computer vision technology.
           </p>
         </div>
@@ -200,17 +200,17 @@ export default function ObjectDetection() {
                 <FiInfo className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+            <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
               <DialogHeader>
                 <DialogTitle>Object Detection Service</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                   <div className="space-y-4 pt-4">
                     <div>
-                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                       <p>Our object detection service identifies and locates multiple objects within images.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Upload an image</li>
                         <li>Click "Detect Objects"</li>
@@ -227,9 +227,9 @@ export default function ObjectDetection() {
 
         <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
           <div className="space-y-4">
-            <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+            <FiUpload className="mx-auto h-12 w-12 text-zinc-950 dark:text-gray-400" />
             <div className="flex text-sm text-zinc-600">
-              <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+              <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-950 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-500">
                 <span>Upload an image</span>
                 <input
                   id="file-upload"
@@ -256,8 +256,7 @@ export default function ObjectDetection() {
             disabled={!selectedImage || isLoading}
             className={`w-full py-3 px-4 rounded-md flex items-center justify-center space-x-2 ${
               !selectedImage || isLoading
-                ? 'bg-zinc-800 cursor-not-allowed'
-                : 'bg-zinc-300 hover:bg-zinc-500'
+                ? 'bg-zinc-500 cursor-not-allowed' : 'bg-zinc-300 hover:bg-zinc-500'
             } text-black transition-colors`}
           >
             {isLoading && <FiLoader className="animate-spin" />}
@@ -276,7 +275,7 @@ export default function ObjectDetection() {
 
         {results && results.data.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4 text-white">Detected Objects</h2>
+            <h2 className="text-xl font-semibold mb-4">Detected Objects</h2>
             <Table>
               <TableHeader>
                 <TableRow>

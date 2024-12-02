@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect, useMemo } from 'react'
 import { HoverEffect } from "@/components/ui/card-hover-effect"
 import { projects } from "@/data/projectsData"
@@ -48,16 +47,16 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-24">
       <div className="max-w-2xl mx-auto p-4">
-        <h1 className="relative z-10 text-4xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-zinc-100 to-zinc-500 text-center font-sans font-bold mb-4">
+        <h1 className="relative z-10 text-4xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-500 text-center font-sans font-bold mb-4">
           Telkom AI API Showcase
         </h1>
-        <p className="text-zinc-500 max-w-lg mx-auto my-2 text-sm text-center relative z-10 mb-8">
+        <p className="text-zinc-700 dark:text-zinc-500 max-w-lg mx-auto my-2 text-sm text-center relative z-10 mb-8">
           Explore the power of Telkom Indonesia&apos;s AI-driven APIs. Discover innovative solutions crafted by the Telkom AI DAG Team to revolutionize your digital experiences.
         </p>
         <input
           type="text"
           placeholder="Search APIs..."
-          className="rounded-lg border border-zinc-500 focus:ring-2 focus:ring-zinc-200 w-full relative z-10 mt-4 bg-zinc-950 placeholder:text-zinc-700 pl-3 p-2"
+          className="rounded-lg border border-zinc-800 focus:ring-zinc-800 bg-zinc-100 placeholder:text-zinc-700 dark:border-zinc-500 focus:ring-2 dark:focus:ring-zinc-200 w-full relative z-10 mt-4 dark:bg-zinc-950 dark:placeholder:text-zinc-700 pl-3 p-2"
           onChange={(e) => setSearchTerm(e.target.value)}
           aria-label="Search APIs"
         />

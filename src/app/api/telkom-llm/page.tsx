@@ -132,10 +132,10 @@ function TelkomLLMContent() {
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-zinc-500">
         <div>
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
             Telkom LLM Chat
           </h1>
-          <p className="text-zinc-400 text-sm">
+          <p className="text-zinc-700 dark:text-zinc-500 text-sm">
             Chat with our advanced language model powered by Telkom.
           </p>
         </div>
@@ -145,17 +145,17 @@ function TelkomLLMContent() {
               <FiInfo className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+          <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
             <DialogHeader>
               <DialogTitle>Telkom LLM Chat Service</DialogTitle>
-              <DialogDescription className="text-zinc-400">
+              <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                 <div className="space-y-4 pt-4">
                   <div>
-                    <h4 className="font-medium text-white mb-2">About</h4>
+                    <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                     <p>Our advanced language model can help answer your questions and assist with various tasks.</p>
                   </div>
                   <div>
-                    <h4 className="font-medium text-white mb-2">How to Use</h4>
+                    <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                     <ol className="list-decimal list-inside space-y-2">
                       <li>Type your question or prompt</li>
                       <li>Press enter or click send</li>
@@ -173,11 +173,11 @@ function TelkomLLMContent() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Chat History Sidebar */}
-        <div className="w-64 bg-zinc-900 border-r border-zinc-500 flex flex-col">
+        <div className="w-64 bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 border-r flex flex-col">
           <div className="p-4">
             <Button 
               onClick={handleNewChat}
-              className="w-full bg-zinc-200 hover:bg-zinc-500"
+              className="w-full"
             >
               New Chat
             </Button>
@@ -187,8 +187,8 @@ function TelkomLLMContent() {
               <div
                 key={session.id}
                 onClick={() => handleSessionSelect(session.id)}
-                className={`p-3 cursor-pointer hover:bg-zinc-800 ${
-                  session.id === sessionId ? 'bg-zinc-800' : ''
+                className={`p-3 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-950 ${
+                  session.id === sessionId ? 'bg-zinc-100 dark:bg-zinc-800' : ''
                 } flex justify-between items-center group`}
               >
                 <div className="flex-1 min-w-0">
@@ -215,7 +215,7 @@ function TelkomLLMContent() {
         {/* Chat Section */}
         <div className="flex-1 flex flex-col">
           {/* System Prompt */}
-          <div className="p-4 bg-zinc-900 border-b border-zinc-500">
+          <div className="p-4 bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 border-b">
             <MessageCard
               role="system"
               content={systemPrompt}
@@ -224,7 +224,7 @@ function TelkomLLMContent() {
           </div>
   
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-950">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50 dark:bg-zinc-950">
             {conversation.slice(1).map((message, index) => (
               <MessageCard
                 key={index}
@@ -236,13 +236,13 @@ function TelkomLLMContent() {
           </div>
   
           {/* Input Area */}
-          <div className="p-4 border-t border-zinc-500 bg-zinc-900">
+          <div className="p-4 border-t bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500">
             <div className="flex space-x-2">
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 bg-zinc-800 min-h-[60px] max-h-[200px]"
+                className="flex-1 bg-zinc-100 dark:bg-zinc-800 min-h-[60px] max-h-[200px]"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -253,7 +253,7 @@ function TelkomLLMContent() {
               <Button 
                 onClick={handleSend} 
                 disabled={isLoading} 
-                className="bg-zinc-300 hover:bg-zinc-100 text-black p-2 rounded-sm self-end h-[60px] w-[60px]"
+                className="bg-zinc-300 hover:bg-zinc-500 dark:hover:bg-zinc-100 text-black p-2 rounded-sm self-end h-[60px] w-[60px]"
               >
                 <Send className="w-5 h-5" />
               </Button>
@@ -262,7 +262,7 @@ function TelkomLLMContent() {
         </div>
   
         {/* Settings Panel */}
-        <div className="w-80 bg-zinc-900 border-l border-zinc-500 p-6 overflow-y-auto">
+        <div className="w-80 border-l bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 p-6 overflow-y-auto">
           <h2 className="text-xl font-semibold mb-6">Settings</h2>
           <div className="space-y-6">
             <div>

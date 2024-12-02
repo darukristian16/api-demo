@@ -100,10 +100,10 @@ function AgeEstimatorContent() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-4 gap-8">
       <div className="w-full max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400 mb-6">
             Age Estimator
           </h1>
-          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+          <p className="mt-4 text-zinc-700 dark:text-zinc-500 text-sm max-w-lg mx-auto">
             Experience our advanced GPU-powered age estimation technology. Upload an image or use your camera to detect faces and estimate ages with high accuracy.
           </p>
         </div>
@@ -131,18 +131,18 @@ function AgeEstimatorContent() {
                 <Info className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+            <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
               <DialogHeader>
-                <DialogTitle>Age Estimator GPU</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogTitle className="text-zinc-900 dark:text-zinc-50">Age Estimator GPU</DialogTitle>
+                <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                   <div className="space-y-4 pt-4">
                     <div>
-                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                       <p>The Age Estimator uses advanced GPU-accelerated AI to detect faces and estimate ages with high accuracy.</p>
                     </div>
                     
                     <div>
-                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Choose between camera or image upload</li>
                         <li>Position face(s) clearly in frame</li>
@@ -153,7 +153,7 @@ function AgeEstimatorContent() {
                     </div>
 
                     <div>
-                      <h4 className="font-medium text-white mb-2">Features</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">Features</h4>
                       <ul className="list-disc list-inside space-y-2">
                         <li>Multi-face detection</li>
                         <li>Real-time processing</li>
@@ -184,9 +184,9 @@ function AgeEstimatorContent() {
           {!isCaptured && selectedTab === "upload" && (
             <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
               <div className="space-y-4">
-                <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+                <FiUpload className="mx-auto h-12 w-12 text-zinc-950 dark:text-gray-400" />
                 <div className="flex text-sm text-zinc-600">
-                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-950 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-500">
                     <span>Upload a file</span>
                     <input
                       id="file-upload"

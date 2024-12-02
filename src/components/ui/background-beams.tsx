@@ -1,10 +1,19 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useTheme } from 'next-themes';
 
 export const BackgroundBeams = React.memo(
-  ({ className }: { className?: string }) => {
+  ({ className }: { className?: string}) => {
+    const [mounted, setMounted] = useState(false)
+    const { theme } = useTheme()
+    useEffect(() => {
+      setMounted(true)
+    }, [])
+
+    if (!mounted) return null
+
     const paths = [
       "M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875",
       "M-373 -197C-373 -197 -305 208 159 335C623 462 691 867 691 867",
@@ -57,6 +66,7 @@ export const BackgroundBeams = React.memo(
       "M-44 -573C-44 -573 24 -168 488 -41C952 86 1020 491 1020 491",
       "M-37 -581C-37 -581 31 -176 495 -49C959 78 1027 483 1027 483",
     ];
+
     return (
       <div
         className={cn(
@@ -127,8 +137,8 @@ export const BackgroundBeams = React.memo(
               gradientUnits="userSpaceOnUse"
               gradientTransform="translate(352 34) rotate(90) scale(555 1560.62)"
             >
-              <stop offset="0.0666667" stopColor="var(--neutral-300)"></stop>
-              <stop offset="0.243243" stopColor="var(--neutral-300)"></stop>
+              <stop offset="0.0666667" stopColor={theme === 'dark' ? '#d4d4d4' : '#262626'}></stop>
+              <stop offset="0.243243" stopColor={theme === 'dark' ? '#d4d4d4' : '#262626'}></stop>
               <stop offset="0.43594" stopColor="white" stopOpacity="0"></stop>
             </radialGradient>
           </defs>

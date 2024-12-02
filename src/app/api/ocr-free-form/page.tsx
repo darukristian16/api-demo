@@ -110,10 +110,10 @@ export default function OCRFreeForm() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
             OCR Free Form
           </h1>
-          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+          <p className="mt-2 text-zinc-700 dark:text-zinc-500 text-sm max-w-lg mx-auto">
             Extract specific information from documents using custom labels and descriptions.
           </p>
         </div>
@@ -125,17 +125,17 @@ export default function OCRFreeForm() {
                 <FiInfo className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+            <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
               <DialogHeader>
                 <DialogTitle>Free Form OCR Service</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                   <div className="space-y-4 pt-4">
                     <div>
-                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                       <p>Our Free Form OCR service allows you to extract specific information using custom labels and descriptions.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Upload your document</li>
                         <li>Add custom labels and descriptions</li>
@@ -153,9 +153,9 @@ export default function OCRFreeForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
             <div className="space-y-4">
-              <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+              <FiUpload className="mx-auto h-12 w-12 text-zinc-950 dark:text-gray-400" />
               <div className="flex text-sm text-zinc-600">
-                <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-300 hover:text-zinc-500">
+                <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-zinc-950 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-500">
                   <span>Upload a file</span>
                   <input
                     id="file-upload"
@@ -178,7 +178,7 @@ export default function OCRFreeForm() {
 
           {previewUrl && (
             <div className="mt-6">
-              <h2 className="text-xl font-semibold text-white mb-4">Preview:</h2>
+              <h2 className="text-xl font-semibold mb-4">Preview:</h2>
               <div className="relative inline-block">
                 <img 
                   src={previewUrl} 
@@ -192,8 +192,8 @@ export default function OCRFreeForm() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div className="flex-1 grid grid-cols-2 gap-2">
-                <Label className="text-white">Label</Label>
-                <Label className="text-white">Description</Label>
+                <Label>Label</Label>
+                <Label>Description</Label>
               </div>
               <Button type="button" onClick={handleAddLabel} variant="outline">
                 Add Label
@@ -206,13 +206,13 @@ export default function OCRFreeForm() {
                   placeholder="Enter label"
                   value={pair.label}
                   onChange={(e) => handleLabelChange(index, 'label', e.target.value)}
-                  className="bg-zinc-900/50 text-white border-zinc-500"
+                  className="bg-zinc-100 border-zinc-950 dark:bg-zinc-800/50 dark:border-zinc-500"
                 />
                 <Input
                   placeholder="Enter value"
                   value={pair.description}
                   onChange={(e) => handleLabelChange(index, 'description', e.target.value)}
-                  className="bg-zinc-900/50 text-white border-zinc-500"
+                  className="bg-zinc-50 border-zinc-950 dark:bg-zinc-900/50 dark:border-zinc-700"
                 />
                 <Button 
                   type="button" 
@@ -230,7 +230,7 @@ export default function OCRFreeForm() {
             type="submit" 
             disabled={isLoading}
             className={`w-full py-3 px-4 rounded-md flex items-center justify-center space-x-2 ${
-              isLoading ? 'bg-zinc-800 cursor-not-allowed' : 'bg-zinc-300 hover:bg-zinc-500'
+              isLoading ? 'bg-zinc-500 cursor-not-allowed' : 'bg-zinc-300 hover:bg-zinc-500'
             } text-black transition-colors`}
           >
             {isLoading && <FiLoader className="animate-spin" />}
@@ -240,25 +240,25 @@ export default function OCRFreeForm() {
 
         {result && (
           <div className="mt-8 space-y-6">
-            <h2 className="text-xl font-semibold text-white">Extracted Information</h2>
+            <h2 className="text-xl font-semibold">Extracted Information</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h3 className="text-lg font-medium text-white mb-4">Information</h3>
+                <h3 className="text-lg font-medium mb-4">Information</h3>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-white mb-4">Context</h3>
+                <h3 className="text-lg font-medium mb-4">Context</h3>
               </div>
               {result.result.map((item, index) => (
                 <React.Fragment key={index}>
-                  <Card className="p-4 bg-zinc-900 border-zinc-700">
+                  <Card className="p-4 bg-zinc-50 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
                     <div>
-                      <h3 className="font-medium text-white">{item.type}</h3>
-                      <p className="mt-1 text-white">{item.value}</p>
+                      <h3 className="font-medium">{item.type}</h3>
+                      <p className="mt-1">{item.value}</p>
                     </div>
                   </Card>
-                  <Card className="p-4 bg-zinc-900 border-zinc-700">
+                  <Card className="p-4 bg-zinc-50 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
                     <div>
-                      <p className="text-sm text-zinc-400">{item.context}</p>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">{item.context}</p>
                     </div>
                   </Card>
                 </React.Fragment>

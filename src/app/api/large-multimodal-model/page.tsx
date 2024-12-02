@@ -141,10 +141,10 @@ export default function LargeMultimodalModel() {
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="md:text-6xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-50 to-zinc-400">
+          <h1 className="md:text-6xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
             Large Multimodal Model
           </h1>
-          <p className="mt-2 text-zinc-400 text-sm max-w-lg mx-auto">
+          <p className="mt-2 text-zinc-700 dark:text-zinc-500 text-sm max-w-lg mx-auto">
             Chat with our AI about images and text using advanced multimodal technology.
           </p>
         </div>
@@ -155,17 +155,17 @@ export default function LargeMultimodalModel() {
                 <FiInfo className="h-4 w-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-500 text-white">
+            <DialogContent className="sm:max-w-[425px] bg-zinc-50 border-zinc-800 dark:bg-zinc-950 border:dark-zinc-500 text-zinc-900 dark:text-white">
               <DialogHeader>
                 <DialogTitle>Multimodal Chat Service</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription className="text-zinc-600 dark:text-zinc-400">
                   <div className="space-y-4 pt-4">
                     <div>
-                      <h4 className="font-medium text-white mb-2">About</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">About</h4>
                       <p>Our multimodal chat service can understand and discuss both images and text.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-white mb-2">How to Use</h4>
+                      <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Upload an image</li>
                         <li>Type your question or prompt</li>
@@ -182,7 +182,7 @@ export default function LargeMultimodalModel() {
 
         {previewUrl && (
           <div className="mt-6 mb-8">
-            <h2 className="text-xl font-semibold text-white mb-4">Preview:</h2>
+            <h2 className="text-xl font-semibold text-zinc-950 dark:text-white mb-4">Preview:</h2>
             <div className="relative inline-block">
               <img 
                 src={previewUrl} 
@@ -201,7 +201,7 @@ export default function LargeMultimodalModel() {
             >
               <div
                 className={`p-4 rounded-lg ${
-                  message.role === 'user' ? 'bg-zinc-800' : 'bg-zinc-900'
+                  message.role === 'user' ? 'bg-zinc-100 dark:bg-zinc-800' : 'bg-zinc-200 dark:bg-zinc-900'
                 } max-w-[80%]`}
               >
                 {message.image && (
@@ -211,14 +211,14 @@ export default function LargeMultimodalModel() {
                     className="max-w-xs mb-2 rounded"
                   />
                 )}
-                <p className="text-white whitespace-pre-wrap">{message.content}</p>
+                <p className="text-zinc-950 dark:text-white whitespace-pre-wrap">{message.content}</p>
               </div>
             </div>
           ))}
 
           {isLoading && (
               <div className="flex justify-start">
-                <div className="p-4 rounded-lg bg-zinc-900 max-w-[80%]">
+                <div className="p-4 rounded-lg bg-zinc-200 dark:bg-zinc-900 max-w-[80%]">
                   <div className="flex items-center space-x-4">
                     <div className="space-y-2">
                       <Skeleton className="h-4 w-[250px]" />
@@ -231,7 +231,7 @@ export default function LargeMultimodalModel() {
 
           {file && isNewImage && (
             <div className="flex justify-end">
-              <div className="p-4 rounded-lg bg-zinc-800 max-w-[80%]">
+              <div className="p-4 rounded-lg bg-zinc-100 dark:bg-zinc-800 max-w-[80%]">
                 <img
                   src={URL.createObjectURL(file)}
                   alt="Preview"
@@ -254,21 +254,21 @@ export default function LargeMultimodalModel() {
               />
               <label
                 htmlFor="file-upload"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 cursor-pointer"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-400 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 cursor-pointer"
               >
-                <ImagePlus className="w-5 h-5 text-zinc-300" />
+                <ImagePlus className="w-5 h-5 text-zinc-50 dark:text-zinc-300" />
               </label>
             </div>
             <Input
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask a question..."
-              className="flex-1 bg-zinc-800 text-white border-zinc-500"
+              className="flex-1  text-zinc-900 dark:text-white bg-zinc-100 border-zinc-500 dark:bg-zinc-800 dark:border-zinc-500"
             />
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-zinc-300 hover:bg-zinc-500 text-black"
+              className="bg-zinc-400 hover:bg-zinc-200 dark:bg-zinc-300 dark:hover:bg-zinc-500 text-white dark:text-black"
             >
               {isLoading ? 'Sending...' : 'Send'}
             </Button>

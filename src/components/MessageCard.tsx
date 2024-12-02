@@ -45,7 +45,7 @@ const MessageCard: React.FC<MessageCardProps> = ({ role, content, onEdit }) => {
   return (
     <div className="border-gray-200 dark:border-zinc-700">
       <div className={cn(
-        "px-4 py-2 text-sm font-light uppercase tracking-wide",
+        "px-4 py-2 text-sm font-bold uppercase tracking-wide",
         role === 'user' ? "text-blue-500" :
         role === 'assistant' ? "text-green-500" :
         "text-gray-500"
