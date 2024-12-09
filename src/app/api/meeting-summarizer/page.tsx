@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import useMeetingSummarizer from '@/hooks/useMeetingSummarizer'
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   Dialog,
   DialogContent,
@@ -14,77 +13,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-interface TranscriptionResult {
-  text: string;
-}
-
-interface SummaryResult {
-  response: string;
-  inference_time?: number;
-}
-
 export default function MeetingSummarizer() {
-  const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [transcription, setTranscription] = useState<string | null>(null);
-  const [summary, setSummary] = useState<SummaryResult | null>(null);
-  const [summaryDetail, setSummaryDetail] = useState(0.4);
-  const [additionalInstructions, setAdditionalInstructions] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file) return;
-    setIsLoading(true);
-  
-    try {
-      // First, transcribe the audio
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('response_format', 'text');
-      formData.append('to_wav', 'yes');
-      formData.append('language', 'english');
-      formData.append('task', 'transcribe');
-  
-      const transcriptionResponse = await fetch(process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_URL!, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'x-api-key': process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_KEY!,
-        },
-        body: formData,
-      });
-  
-      const transcriptionData = await transcriptionResponse.json();
-      const transcriptionText = transcriptionData.text || transcriptionData;
-      setTranscription(transcriptionText);
-  
-      // Then, summarize the transcription
-      const summaryResponse = await fetch(process.env.NEXT_PUBLIC_LLAMA_SUMMARIZE_URL!, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.NEXT_PUBLIC_LLAMA_SUMMARIZE_API_KEY!,
-        },
-        body: JSON.stringify({
-          text_input: transcriptionText,
-          summary_detail: Number(summaryDetail),
-          ...(additionalInstructions ? { additional_instruction: additionalInstructions } : { additional_instruction: "string" })
-        }),
-      });
-  
-      if (!summaryResponse.ok) {
-        throw new Error(`Summary API error: ${summaryResponse.status}`);
-      }
-  
-      const summaryData = await summaryResponse.json();
-      setSummary(summaryData);
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };  
+  const {
+    file,
+    isLoading,
+    transcription,
+    summary,
+    summaryDetail,
+    additionalInstructions,
+    setSummaryDetail,
+    setAdditionalInstructions,
+    handleFileChange,
+    handleSubmit,
+  } = useMeetingSummarizer();
 
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
@@ -130,7 +71,7 @@ export default function MeetingSummarizer() {
           </Dialog>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6">
           <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
             <div className="space-y-4">
               <FiUpload className="mx-auto h-12 w-12 text-zinc-950 dark:text-gray-400" />
@@ -141,7 +82,7 @@ export default function MeetingSummarizer() {
                     id="file-upload"
                     type="file"
                     className="sr-only"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
                     accept="audio/*"
                   />
                 </label>

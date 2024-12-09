@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from "react";
-import { useAgeEstimator } from "@/components/camera";
-import { useSearchParams } from 'next/navigation';
+import useAgeEstimatorLogic from "@/hooks/useAgeEstimatorLogic";
+import React  from "react";
 import { Button } from "@/components/ui/button";
 import { Camera, Upload, RotateCcw, Download, Info } from "lucide-react";
-import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
+import { FiUpload } from 'react-icons/fi';
 import Image from 'next/image';
 import {
   Dialog,
@@ -18,83 +17,25 @@ import {
 
 
 function AgeEstimatorContent() {
-  const { 
-    image, 
-    detections,
+  const {
+    name,
+    selectedTab,
+    setSelectedTab,
+    isCaptured,
     isLoading,
-    isCaptured, 
-    capture, 
-    retryCapture, 
-    predictAge, 
-    CameraWithWatermark, 
-    downloadImage, 
-    handleFileUpload 
-  } = useAgeEstimator();
-
-  const searchParams = useSearchParams();
-  const [name, setName] = useState("");
-  const [selectedTab, setSelectedTab] = useState("camera");
-  const imageRef = useRef<HTMLDivElement>(null);
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    const nameParam = searchParams.get('name');
-    if (nameParam) {
-      setName(decodeURIComponent(nameParam));
-    }
-  }, [searchParams]);
-
-  const handleDownload = () => {
-    downloadImage(name);
-  };
-
-  const renderDetectionBoxes = () => {
-    if (!imageDimensions.width || !imageDimensions.height) return null;
-  
-    const faceDetections = detections.filter(detection => detection.name === "face");
-    
-    return faceDetections.map((detection, index) => {
-      const [x1, y1, x2, y2] = detection.location.x1y1x2y2;
-      
-      const scaleX = imageDimensions.width / 1920;
-      const scaleY = imageDimensions.height / 1080;
-      
-      const boxStyle = {
-        position: 'absolute',
-        left: `${x1 * scaleX}px`,
-        top: `${y1 * scaleY}px`,
-        width: `${(x2 - x1) * scaleX}px`,
-        height: `${(y2 - y1) * scaleY}px`,
-        border: '2px solid rgba(255, 255, 255, 0.8)',
-        boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.3)',
-        borderRadius: '4px',
-        pointerEvents: 'none',
-      };
-  
-      const labelStyle = {
-        position: 'absolute',
-        bottom: '-30px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: '500',
-        whiteSpace: 'nowrap',
-        backdropFilter: 'blur(4px)',
-      };
-  
-      return (
-        <div key={index} style={boxStyle as React.CSSProperties}>
-          <div style={labelStyle as React.CSSProperties}>
-            {Math.round(detection.age)} years old
-          </div>
-        </div>
-      );
-    });
-  };  
+    image,
+    detections,
+    imageRef,
+    CameraWithWatermark,
+    capture,
+    retryCapture,
+    predictAge,
+    handleFileUpload,
+    handleDownload,
+    onImageLoad,
+    renderDetectionBoxes,
+    setImageDimensions,
+  } = useAgeEstimatorLogic();
 
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-4 gap-8">
@@ -223,7 +164,13 @@ function AgeEstimatorContent() {
                 }}
               />
               
-              {renderDetectionBoxes()}
+              {renderDetectionBoxes().map((box) => (
+                <div key={box.key} style={box.boxStyle}>
+                  <div style={box.labelStyle}>
+                    {box.label}
+                  </div>
+                </div>
+              ))}
 
               <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 z-10">
                 {detections.length === 0 && (

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
@@ -12,105 +11,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-
-interface Word {
-  word: string;
-  start: number;
-  end: number;
-  probability: number;
-}
-
-interface Segment {
-  id: number;
-  text: string;
-  start: number;
-  end: number;
-  words: Word[];
-}
-
-interface VerboseJsonResult {
-  task: string;
-  language: string;
-  duration: number;
-  text: string;
-  segments: Segment[];
-}
-
-interface JsonResult {
-  text: string;
-}
-
-interface TranscriptionResults {
-  verbose_json: VerboseJsonResult | null;
-  json: JsonResult | null;
-  text: string | null;
-  srt: string | null;
-  vtt: string | null;
-}
+} from "@/components/ui/dialog";
+import useSpeechToText from "@/hooks/useSpeechToText";
 
 export default function SpeechToText() {
-  const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<TranscriptionResults>({
-    verbose_json: null,
-    json: null,
-    text: null,
-    srt: null,
-    vtt: null
-  });
-  const [selectedFormat, setSelectedFormat] = useState<string>('verbose_json');
-
-  const formatTime = (seconds: number) => {
-    if (typeof seconds !== 'number') return '00:00:00';
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file) return;
-    setIsLoading(true);
-  
-    try {
-      const formats = ['verbose_json', 'json', 'text', 'srt', 'vtt'];
-      const responses = await Promise.all(
-        formats.map(async (format) => {
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('response_format', format);
-          formData.append('to_wav', 'yes');
-          formData.append('language', 'english'); // Add language parameter
-          formData.append('task', 'transcribe'); // Add task parameter
-  
-          const response = await fetch(process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_URL!, {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'x-api-key': process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_KEY!,
-            },
-            body: formData,
-          });
-  
-          const data = await response.json();
-          return { format, data };
-        })
-      );
-  
-      const newResults = responses.reduce((acc, { format, data }) => {
-        acc[format as keyof TranscriptionResults] = data;
-        return acc;
-      }, {} as TranscriptionResults);
-  
-      setResults(newResults);
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }; 
+  const {
+    file,
+    isLoading,
+    results,
+    selectedFormat,
+    setSelectedFormat,
+    handleFileChange,
+    handleSubmit,
+    formatTime,
+  } = useSpeechToText();
 
   const renderSelectedResult = () => {
     switch (selectedFormat) {
@@ -227,7 +141,7 @@ export default function SpeechToText() {
           </Dialog>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(e) => {e.preventDefault(); handleSubmit();}} className="space-y-6">
           <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
             <div className="space-y-4">
               <FiUpload className="mx-auto h-12 w-12 text-zinc-950 dark:text-gray-400" />
@@ -238,7 +152,7 @@ export default function SpeechToText() {
                     id="file-upload"
                     type="file"
                     className="sr-only"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
                     accept="audio/*"
                   />
                 </label>
@@ -279,7 +193,7 @@ export default function SpeechToText() {
 
           {isLoading && (
             <div className="mt-6">
-              <Card className="p-4 bg-zinc-900 border-zinc-700">
+              <Card className="p-4 bg-zinc-300 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
                 <div className="flex items-center space-x-4">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-[250px]" />

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { FiLoader, FiInfo } from 'react-icons/fi';
 import {
@@ -11,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import useSentimentAnalysis from "@/hooks/useSentimentAnalysis";
 
 interface SentimentResponse {
   label: string
@@ -18,34 +18,13 @@ interface SentimentResponse {
 }
 
 export default function SentimentAnalysis() {
-  const [text, setText] = useState('')
-  const [result, setResult] = useState<SentimentResponse | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  const analyzeSentiment = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch(process.env.NEXT_PUBLIC_SENTIMENT_ANALYSIS_URL!, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.NEXT_PUBLIC_SENTIMENT_ANALYSIS_API_KEY!
-        },
-        body: JSON.stringify({ text })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to analyze sentiment')
-      }
-
-      const data = await response.json()
-      setResult(data)
-    } catch (error) {
-      console.error('Error analyzing sentiment:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { 
+    text, 
+    result, 
+    loading, 
+    setText, 
+    analyzeSentiment 
+  } = useSentimentAnalysis();
 
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">

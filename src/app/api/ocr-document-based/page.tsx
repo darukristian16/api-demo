@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
-import { processOCRDocument } from '@/lib/ocrService';
 import {
   Dialog,
   DialogContent,
@@ -12,98 +10,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import * as pdfjsLib from 'pdfjs-dist';
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-
-interface OCRResult {
-  [key: string]: {
-    data: string;
-  }
-}
+import useOCRDocument from "@/hooks/useOCRDocument";
 
 export default function OCRPage() {
-    const [file, setFile] = useState<File | null>(null);
-    const [result, setResult] = useState<OCRResult | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    useEffect(() => {
-      // Cleanup function to revoke object URLs
-      return () => {
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl);
-        }
-      };
-    }, [previewUrl]);
-
-    const generatePreview = async (file: File) => {
-      if (file.type === 'application/pdf') {
-        const fileArrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: fileArrayBuffer }).promise;
-        const page = await pdf.getPage(1);
-        const viewport = page.getViewport({ scale: 1.5 });
-        
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        
-        await page.render({
-          canvasContext: context!,
-          viewport: viewport
-        }).promise;
-        
-        const previewUrl = canvas.toDataURL('image/png');
-        setPreviewUrl(previewUrl);
-      } else {
-        const imageUrl = URL.createObjectURL(file);
-        setPreviewUrl(imageUrl);
-      }
-    };
-
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files[0]) {
-        const selectedFile = e.target.files[0];
-        if (selectedFile.size > 10 * 1024 * 1024) {
-          setError('File size must be less than 10MB');
-          return;
-        }
-        setFile(selectedFile);
-        await generatePreview(selectedFile);
-        setError(null);
-        setResult(null);
-      }
-    };
-  
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!file) {
-        setError('Please select a file');
-        return;
-      }
-  
-      setLoading(true);
-      setError(null);
-  
-      try {
-        const data = await processOCRDocument(file);
-        if (typeof data === 'string') {
-          setResult({ text: { data } });
-        } else if (data && typeof data === 'object') {
-          setResult(data);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (err: Error | unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Error processing file. Please try again.';
-        setError(errorMessage);
-        console.error('OCR Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    file,
+    result,
+    loading,
+    error,
+    previewUrl,
+    handleFileChange,
+    handleSubmit,
+  } = useOCRDocument();
 
   return (
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
@@ -160,7 +78,7 @@ export default function OCRPage() {
           </Dialog>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(e) => {e.preventDefault(); handleSubmit();}} className="space-y-6">
           <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-500 transition-colors">
             <div className="space-y-4">
               <FiUpload className="mx-auto h-12 w-12 text-zinc-950 dark:text-gray-400" />
@@ -172,7 +90,7 @@ export default function OCRPage() {
                     name="file-upload"
                     type="file"
                     className="sr-only"
-                    onChange={handleFileChange}
+                    onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
                     accept="image/*,.pdf"
                   />
                 </label>

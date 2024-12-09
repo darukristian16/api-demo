@@ -1,43 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
+import { useLogin } from '@/hooks/useLogin'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-    const formData = new FormData(e.currentTarget)
-
-    try {
-      const response = await signIn('credentials', {
-        username: formData.get('username'),
-        password: formData.get('password'),
-        redirect: false,
-      })
-
-      if (response?.error) {
-        setError('Invalid credentials')
-      } else {
-        router.push('/')
-        router.refresh()
-      }
-    } catch (error) {
-      setError('An error occurred')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { error, isLoading, handleSubmit } = useLogin()
 
   return (
     <div className="flex min-h-screen items-center justify-center relative z-50">
