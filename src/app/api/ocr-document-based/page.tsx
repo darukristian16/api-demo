@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import useOCRDocument from "@/hooks/useOCRDocument";
+import { ExamplesCarousel } from '@/components/article-carousel';
 
 export default function OCRPage() {
   const {
@@ -24,6 +25,7 @@ export default function OCRPage() {
   } = useOCRDocument();
 
   return (
+    <>
     <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
@@ -154,6 +156,10 @@ export default function OCRPage() {
           )}
       </div>
     </div>
+    <div className='flex items-center justify-center mb-8 py-8'>
+      <ExamplesCarousel />
+    </div>
+    </>
   );
 }
 

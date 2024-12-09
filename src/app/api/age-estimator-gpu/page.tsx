@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
+import { ExamplesCarousel } from '@/components/article-carousel';
 
 function AgeEstimatorContent() {
   const {
@@ -38,7 +38,8 @@ function AgeEstimatorContent() {
   } = useAgeEstimatorLogic();
 
   return (
-    <div className="flex flex-wrap items-center justify-center min-h-screen p-4 gap-8">
+    <>
+        <div className="flex flex-wrap items-center justify-center min-h-screen p-4 gap-8">
       <div className="w-full max-w-3xl">
         <div className="text-center mb-8">
           <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400 mb-6">
@@ -195,6 +196,10 @@ function AgeEstimatorContent() {
         </div>
       </div>
     </div>
+    <div className='flex items-center justify-center mb-8 py-8'>
+      <ExamplesCarousel />
+    </div>
+    </>
   );
 }
 

@@ -22,6 +22,7 @@ import { getAllChatSessions } from '@/lib/sessionStorage';
 import { ChatSession } from '@/lib/sessionStorage';
 import { deleteSession } from '@/lib/sessionStorage';
 import { Trash2 } from 'lucide-react';
+import { ExamplesCarousel } from '@/components/article-carousel';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -128,7 +129,8 @@ function TelkomLLMContent() {
   };  
 
   return (
-    <div className="flex flex-col h-screen">
+    <>
+        <div className="flex flex-col h-screen">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-zinc-500">
         <div>
@@ -173,7 +175,7 @@ function TelkomLLMContent() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Chat History Sidebar */}
-        <div className="w-64 bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 border-r flex flex-col">
+        <div className="w-64 bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 border-r border-b flex flex-col">
           <div className="p-4">
             <Button 
               onClick={handleNewChat}
@@ -236,7 +238,7 @@ function TelkomLLMContent() {
           </div>
   
           {/* Input Area */}
-          <div className="p-4 border-t bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500">
+          <div className="p-4 border-t border-b bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500">
             <div className="flex space-x-2">
               <Textarea
                 value={input}
@@ -262,7 +264,7 @@ function TelkomLLMContent() {
         </div>
   
         {/* Settings Panel */}
-        <div className="w-80 border-l bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 p-6 overflow-y-auto">
+        <div className="w-80 border-l border-b bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500 p-6 overflow-y-auto">
           <h2 className="text-xl font-semibold mb-6">Settings</h2>
           <div className="space-y-6">
             <div>
@@ -293,6 +295,10 @@ function TelkomLLMContent() {
         </div>
       </div>
     </div>
+    <div className='flex items-center justify-center mb-8 py-8'>
+      <ExamplesCarousel />
+    </div>
+    </>
   );  
 }
 

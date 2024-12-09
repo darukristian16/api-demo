@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useSpeechToText from "@/hooks/useSpeechToText";
+import { ExamplesCarousel } from '@/components/article-carousel';
 
 export default function SpeechToText() {
   const {
@@ -98,7 +99,8 @@ export default function SpeechToText() {
   
 
   return (
-    <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
+    <>
+        <div className="flex flex-wrap items-center justify-center min-h-screen p-16 gap-8">
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="text-center mb-8">
           <h1 className="md:text-7xl text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-tr from-zinc-800 to-zinc-950 dark:from-zinc-50 dark:to-zinc-400">
@@ -191,19 +193,6 @@ export default function SpeechToText() {
             </div>
           )}
 
-          {isLoading && (
-            <div className="mt-6">
-              <Card className="p-4 bg-zinc-300 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
-                <div className="flex items-center space-x-4">
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-[250px]" />
-                    <Skeleton className="h-4 w-[200px]" />
-                  </div>
-                </div>
-              </Card>
-            </div>
-          )}
-
           <Button 
             type="submit" 
             disabled={isLoading || !file}
@@ -230,8 +219,25 @@ export default function SpeechToText() {
           </select>
         </div>
 
+        {isLoading && (
+            <div className="mt-6">
+              <Card className="p-4 bg-zinc-300 border-zinc-950 dark:bg-zinc-900 dark:border-zinc-700">
+                <div className="flex items-center space-x-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
         {Object.values(results).some(result => result !== null) && renderSelectedResult()}
       </div>
     </div>
+    <div className='flex items-center justify-center mb-8 py-8'>
+      <ExamplesCarousel />
+    </div>
+    </>
   );
 }
