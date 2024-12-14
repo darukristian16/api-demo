@@ -23,6 +23,9 @@ import { ChatSession } from '@/lib/sessionStorage';
 import { deleteSession } from '@/lib/sessionStorage';
 import { Trash2 } from 'lucide-react';
 import { ExamplesCarousel } from '@/components/article-carousel';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -228,15 +231,28 @@ function TelkomLLMContent() {
           {/* Chat Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50 dark:bg-zinc-950">
             {conversation.slice(1).map((message, index) => (
-              <MessageCard
+              <div
                 key={index}
-                role={message.role}
-                content={message.content}
-              />
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`p-4 rounded-lg ${
+                    message.role === 'user' ? 'bg-zinc-100 dark:bg-zinc-800' : 'bg-zinc-200 dark:bg-zinc-900'
+                  } max-w-[80%]`}
+                >
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeSanitize]}
+                    className="text-zinc-950 dark:text-white whitespace-pre-wrap prose dark:prose-invert max-w-none prose-zinc"
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
-  
+
           {/* Input Area */}
           <div className="p-4 border-t border-b bg-zinc-50 border-zinc-500 dark:bg-zinc-900 dark:border-zinc-500">
             <div className="flex space-x-2">

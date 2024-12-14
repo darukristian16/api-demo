@@ -104,7 +104,7 @@ export default function LargeMultimodalModel() {
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeSanitize]}
-                  className="text-zinc-950 dark:text-white whitespace-pre-wrap"
+                  className="text-zinc-950 dark:text-white whitespace-pre-wrap prose dark:prose-invert max-w-none prose-zinc"
                 >
                   {message.content}
                 </ReactMarkdown>
