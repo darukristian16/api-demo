@@ -17,14 +17,12 @@ export default function useOCRDocument() {
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Cleanup preview URL when component unmounts
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
 
-  // Generate preview for images or PDFs
   const generatePreview = async (file: File) => {
     if (file.type === "application/pdf") {
       const fileArrayBuffer = await file.arrayBuffer();
@@ -81,11 +79,8 @@ export default function useOCRDocument() {
       } else {
         throw new Error("Invalid response format");
       }
-    } catch (err: any) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Error processing file. Please try again.";
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Error processing file. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);

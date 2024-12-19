@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
+import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
@@ -106,9 +107,11 @@ export default function OCRFreeForm() {
             <div className="mt-6">
               <h2 className="text-xl font-semibold mb-4">Preview:</h2>
               <div className="relative inline-block">
-                <img 
+                <Image 
                   src={previewUrl} 
-                  alt="Document preview" 
+                  alt="Document preview"
+                  width={800}
+                  height={600} 
                   className="max-w-full h-auto rounded-lg"
                 />
               </div>

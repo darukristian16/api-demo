@@ -65,7 +65,7 @@ export default function ObjectDetection() {
                       <h4 className="font-medium text-zinc-900 dark:text-white mb-2">How to Use</h4>
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Upload an image</li>
-                        <li>Click "Detect Objects"</li>
+                        <li>Click &quot;Detect Objects&quot;</li>
                         <li>View detected objects with bounding boxes</li>
                         <li>Check confidence scores in the table below</li>
                       </ol>

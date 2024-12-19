@@ -21,12 +21,14 @@ export function useLogin() {
 
       if (response?.error) {
         setError('Invalid credentials')
+        throw new Error(response.error)
       } else {
         router.push('/')
         router.refresh()
       }
-    } catch (error) {
+    } catch (err) {
       setError('An error occurred')
+      throw err
     } finally {
       setIsLoading(false)
     }

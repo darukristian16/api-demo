@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import useOCRDocument from "@/hooks/useOCRDocument";
 import { ExamplesCarousel } from '@/components/article-carousel';
+import Image from 'next/image';
 
 export default function OCRPage() {
   const {
@@ -58,7 +59,7 @@ export default function OCRPage() {
                       <ol className="list-decimal list-inside space-y-2">
                         <li>Upload your document (PDF, PNG, or JPG)</li>
                         <li>Ensure file size is under 10MB</li>
-                        <li>Click "Extract Text" to process</li>
+                        <li>Click &quot;Extract Text&quot; to process</li>
                         <li>View the extracted text below</li>
                         <li>Copy or save the results as needed</li>
                       </ol>
@@ -136,9 +137,11 @@ export default function OCRPage() {
               {/* Display preview image */}
               {previewUrl && (
                 <div className="relative inline-block">
-                  <img 
+                  <Image 
                     src={previewUrl} 
                     alt="Processed document" 
+                    width={800}
+                    height={600}
                     className="max-w-full h-auto rounded-md"
                   />
                 </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { FiUpload, FiFile, FiLoader, FiInfo } from 'react-icons/fi';
+import { FiLoader, FiInfo } from 'react-icons/fi';
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Dialog,

@@ -1,7 +1,7 @@
 'use client'
 
 import useAgeEstimatorLogic from "@/hooks/useAgeEstimatorLogic";
-import React  from "react";
+import React, { Suspense }  from "react";
 import { Button } from "@/components/ui/button";
 import { Camera, Upload, RotateCcw, Download, Info } from "lucide-react";
 import { FiUpload } from 'react-icons/fi';
@@ -18,7 +18,6 @@ import { ExamplesCarousel } from '@/components/article-carousel';
 
 function AgeEstimatorContent() {
   const {
-    name,
     selectedTab,
     setSelectedTab,
     isCaptured,
@@ -32,7 +31,6 @@ function AgeEstimatorContent() {
     predictAge,
     handleFileUpload,
     handleDownload,
-    onImageLoad,
     renderDetectionBoxes,
     setImageDimensions,
   } = useAgeEstimatorLogic();
@@ -89,7 +87,7 @@ function AgeEstimatorContent() {
                         <li>Choose between camera or image upload</li>
                         <li>Position face(s) clearly in frame</li>
                         <li>Capture or upload your image</li>
-                        <li>Click "Estimate Age" to process</li>
+                        <li>Click &quot;Estimate Age&quot; to process</li>
                         <li>View results displayed over detected faces</li>
                       </ol>
                     </div>
@@ -204,5 +202,9 @@ function AgeEstimatorContent() {
 }
 
 export default function AgeEstimator() {
-  return <AgeEstimatorContent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AgeEstimatorContent />
+    </Suspense>
+  );
 }

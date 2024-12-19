@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ImagePlus } from 'lucide-react'; // Add this import at the top
 import { Skeleton } from "@/components/ui/skeleton"
 import { FiInfo } from 'react-icons/fi';
+import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +33,6 @@ export default function LargeMultimodalModel() {
     messages,
     isLoading,
     error,
-    previewUrl,
     isNewImage,
     setQuestion,
     handleFileChange,
@@ -95,9 +95,11 @@ export default function LargeMultimodalModel() {
                 } max-w-[80%]`}
               >
                 {message.image && (
-                  <img
+                  <Image
                     src={message.image}
                     alt="Uploaded content"
+                    width={320}
+                    height={240}
                     className="max-w-xs mb-2 rounded"
                   />
                 )}
@@ -128,9 +130,11 @@ export default function LargeMultimodalModel() {
           {file && isNewImage && (
             <div className="flex justify-end">
               <div className="p-4 rounded-lg bg-zinc-100 dark:bg-zinc-800 max-w-[80%]">
-                <img
+                <Image
                   src={URL.createObjectURL(file)}
                   alt="Preview"
+                  width={320}
+                  height={240}
                   className="max-w-xs mb-2 rounded"
                 />
               </div>

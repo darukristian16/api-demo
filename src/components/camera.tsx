@@ -44,7 +44,6 @@ export const useAgeEstimator = () => {
   const [detections, setDetections] = useState<Detection[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCaptured, setIsCaptured] = useState(false);
-  const [downloadableImage, setDownloadableImage] = useState<string | null>(null);
 
   const standardizeImage = (sourceImage: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -140,7 +139,6 @@ export const useAgeEstimator = () => {
     setImage(null);
     setDetections([]);
     setIsCaptured(false);
-    setDownloadableImage(null);
   };
 
   const predictAge = async () => {
@@ -164,7 +162,6 @@ export const useAgeEstimator = () => {
       );
 
       setDetections(response.data.data);
-      setDownloadableImage(image);
     } catch (error) {
       console.error("Error estimating age", error);
     } finally {

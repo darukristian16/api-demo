@@ -8,6 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Image from "next/image";
 
 const examples = [
   {
@@ -72,11 +73,15 @@ export function ExamplesCarousel() {
                   className="h-full block transition-transform hover:scale-[1.02]"
                 >
                   <Card className="p-4 h-full flex flex-col cursor-pointer">
-                    <img
-                      src={example.image}
-                      alt={example.title}
-                      className="w-full aspect-video object-cover rounded-lg mb-4"
-                    />
+                    <div className="relative w-full aspect-video">
+                      <Image
+                        src={example.image}
+                        alt={example.title}
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
                     <h3 className="font-semibold text-lg mb-2">{example.title}</h3>
                     <p className="text-sm text-zinc-600 dark:text-zinc-400 flex-grow">
                       {example.description}

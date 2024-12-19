@@ -1,20 +1,16 @@
 'use client'
 
 import { useSession, signOut } from 'next-auth/react'
-import { motion, useAnimation } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { HomeIcon, Sun, Moon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useTheme } from 'next-themes'
 
 export function NavBar() {
   const { data: session } = useSession()
-  const controls = useAnimation()
-  const arrowControls = useAnimation()
   const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
